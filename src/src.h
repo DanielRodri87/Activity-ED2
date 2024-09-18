@@ -1,3 +1,5 @@
+#ifndef SRC_H
+#define SRC_H
 /*
 
 lista alunos: mat, nome, codigo_curso, arv notas, arv matriculas, 
@@ -69,9 +71,11 @@ typedef struct alunos
     char nome;
     int codigo_curso;
     Arv_Notas *notas;
-    Arv_Matricula *matricula;
+    Arv_Matricula *mat;
     struct alunos *prox;
 } Alunos;
 
 
+void test_function();
 
+#endif 
