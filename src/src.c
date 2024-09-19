@@ -3,5 +3,5 @@
 
 void test_function()
 {
-    printf("Hello World!!\n");
+    printf("Ate amanha cristina!!\n");
 }
