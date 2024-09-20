@@ -1,5 +1,7 @@
 #include "src.h"
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 void test_function()
 {
@@ -23,7 +25,7 @@ void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, cha
     if(curso_encontrado != NULL){
         Alunos *novo_aluno = (Alunos*) malloc(sizeof(Alunos));
         novo_aluno->matricula = matricula;
-        strcpy(novo_aluno->nome, nome);
+        strcpy(novo_aluno->nome, nome); // Copiando a string corretamente
         novo_aluno->codigo_curso = codigo_curso;
         novo_aluno->notas = NULL;
         novo_aluno->mat = NULL;
@@ -31,5 +33,4 @@ void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, cha
         novo_aluno->prox = *lista_alunos;  
         *lista_alunos = novo_aluno;
     }
-
 }
