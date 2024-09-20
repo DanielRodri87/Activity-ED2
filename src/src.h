@@ -46,7 +46,7 @@ typedef struct arv_notas
 typedef struct arv_disciplina
 {
     int codigo_disciplina;
-    char nome_disciplina;
+    char nome_disciplina[100];
     int periodo;
 
     struct arv_disciplina *esq;
@@ -57,18 +57,18 @@ typedef struct arv_disciplina
 typedef struct arv_cursos
 {
     int codigo_curso;
-    char nome_curso;
+    char nome_curso[100]; 
     int quantidade_periodos;
 
-    struct arv_curso *esq;
-    struct arv_curso *dir;
+    struct arv_cursos *esq;  
+    struct arv_cursos *dir; 
     Arv_Disciplina *disciplina;
 } Arv_Cursos;
 
 typedef struct alunos
 {
     int matricula;
-    char nome;
+    char nome[100];
     int codigo_curso;
     Arv_Notas *notas;
     Arv_Matricula *mat;
