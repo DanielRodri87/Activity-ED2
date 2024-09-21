@@ -19,7 +19,7 @@ CRISTINA: I, III, V, VII, IX, XI, XIII, XV
 
 FEITOS:
 CRISTINA: I
-DANIEL: II 
+DANIEL: II, III, V 
 
 */
 
@@ -76,6 +76,14 @@ typedef struct alunos
 } Alunos;
 
 
-void test_function();
+void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, char nome[], int codigo_curso);
+void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
+int cadastrar_matricula(Arv_Matricula **r, int matricula);
+
+int cadastrar_nota(Arv_Matricula **matricula, Arv_Notas **notas, int codigo_disciplina, float nota_final, float semestre);
+Arv_Matricula* remover_matricula(Arv_Matricula* raiz, int codigo_disciplina);
+Arv_Matricula* encontrar_minimo(Arv_Matricula* raiz);
+Arv_Notas* inserir_nota(Arv_Notas* raiz, Arv_Notas* nova_nota);
+
 
 #endif 
