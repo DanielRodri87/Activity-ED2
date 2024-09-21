@@ -4,7 +4,7 @@ Project developed by students Daniel Rodrigues de Sousa and Cristina de Moura So
 Senator Helvídio Nunes de Barro (CSHNB) for the Data Structure II discipline
 
 - [![Daniel Rodrigues](https://img.shields.io/badge/DanielRodri87-GitHub-blueviolet)](https://github.com/DanielRodri87)
-- [![Cristina Sousa](https://img.shields.io/badge/ritar0drigues-GitHub-blueviolet)](https://github.com/cristinaadms)
+- [![Cristina Sousa](https://img.shields.io/badge/cristinaadms-GitHub-blueviolet)](https://github.com/cristinaadms)
 
 ## 🔗 Development environment
 🔧 GCC
