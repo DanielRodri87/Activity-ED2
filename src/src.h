@@ -14,12 +14,12 @@ Arvore de Matricula: codigo_disciplina
 
 
 AFAZERES:
-DANIEL: II, IV, VI, VIII, X, XII, XIV
-CRISTINA: I, III, V, VII, IX, XI, XIII, XV
+Cristina: II, III, IV, VI, VIII, X, XII, XIV
+Daniel: I, V, VII, IX, XI, XIII, XV
 
 FEITOS:
 CRISTINA: I
-DANIEL: II, III, V 
+DANIEL: II, III, V, VII, IX e XI
 
 */
 
@@ -40,7 +40,7 @@ typedef struct arv_notas
     float nota_final;
 
     struct arv_notas *esq;
-    struct arv_notas*dir;
+    struct arv_notas *dir;
 } Arv_Notas;
 
 typedef struct arv_disciplina
@@ -85,5 +85,6 @@ Arv_Matricula* remover_matricula(Arv_Matricula* raiz, int codigo_disciplina);
 Arv_Matricula* encontrar_minimo(Arv_Matricula* raiz);
 Arv_Notas* inserir_nota(Arv_Notas* raiz, Arv_Notas* nova_nota);
 
+void exibir_curso(Arv_Cursos *r);
 
 #endif 

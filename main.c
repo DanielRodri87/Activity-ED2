@@ -21,6 +21,11 @@ int main() {
     cadastrar_nota(&(lista_alunos->mat), &(lista_alunos->notas), 3001, 8.5, 2024.1);
     cadastrar_nota(&(lista_alunos->prox->mat), &(lista_alunos->prox->notas), 3002, 9.2, 2024.1);
 
+    printf("Cursos do campus CSHNB: \n");
+    exibir_curso(cursos);
+
+    printf("\n\n");
+
     Alunos *aluno_atual = lista_alunos;
     while (aluno_atual != NULL) {
         printf("Aluno: %s (Matricula: %d, Curso: %d)\n", aluno_atual->nome, aluno_atual->matricula, aluno_atual->codigo_curso);
