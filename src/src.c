@@ -162,3 +162,59 @@ Arv_Notas* inserir_nota(Arv_Notas* raiz, Arv_Notas* nova_nota)
     }
     return (resultado);
 }
+
+void exibir_curso(Arv_Cursos *r)
+{
+    if (r != NULL)
+    {
+        printf("Nome do curso: %s | ID: %d\n", r->nome_curso, r->codigo_curso);
+        exibir_curso(r->esq);
+        exibir_curso(r->dir);
+    }
+
+}
+
+void exibir_disciplina_periodo(Arv_Cursos *r, int periodo)
+{
+    if (r != NULL)
+    {
+        if (r->disciplina->periodo == periodo)
+        {
+            printf("Curso: %s | Disciplina: %s | Período: %d\n", r->nome_curso, r->disciplina->nome_disciplina, r->disciplina->periodo);
+            exibir_disciplina_periodo(r->esq, periodo);
+            exibir_disciplina_periodo(r->dir, periodo);
+        }
+    }
+}
+
+int notas_disciplina_periodo(Arv_Notas *n, int periodo)
+{
+    if (n == NULL) 
+        printf("Nota nao encontrada\n");
+    else
+    {
+        if (n->semestre == periodo) 
+            printf("Disciplina: %d, Nota Final: %.2f\n", n->codigo_disciplina, n->nota_final);
+
+        notas_disciplina_periodo(n->esq, periodo);
+        notas_disciplina_periodo(n->dir, periodo);
+    }
+}
+
+void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
+{
+    if (r == NULL)
+        printf("Nao existe alunos cadastrados\n");
+    else
+    {
+        if (r->matricula == mat)
+        {
+            if (r->notas != NULL) 
+                notas_disciplina_periodo(r->notas, periodo);
+            else
+                printf("Este aluno nao possui notas cadastradas\n");
+
+        } else 
+            printf("Aluno nao encontrado\n");
+    }
+}
