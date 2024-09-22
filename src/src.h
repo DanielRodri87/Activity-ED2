@@ -86,5 +86,9 @@ Arv_Matricula* encontrar_minimo(Arv_Matricula* raiz);
 Arv_Notas* inserir_nota(Arv_Notas* raiz, Arv_Notas* nova_nota);
 
 void exibir_curso(Arv_Cursos *r);
+void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
+int notas_disciplina_periodo(Arv_Notas *n, int periodo);
+
+void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
 
 #endif 
