@@ -218,3 +218,46 @@ void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
             printf("Aluno nao encontrado\n");
     }
 }
+
+// função para exibição de todos os alunos de um determinado curso
+void mostrar_alunoscurso(Arv_Matricula *raiz, int codigo_curso){
+    if (raiz != NULL){
+        if(raiz.codigo_disciplina == codigo_curso){
+            printf("Aluno: %s\n", raiz.nome);
+            printf("Matricula: %d\n", raiz.matricula);
+            printf("-------------------------");
+
+        }
+
+        mostrar_alunoscurso(raiz.esq, codigo_curso);
+        mostrar_alunoscurso(raiz.dir, codigo_curso);
+
+    }
+}
+
+// função para exibição de todas as disciplinas de um determinado curso
+void mostrar_disciplinascurso(Arv_Disciplina *raiz, int codigo_curso){
+    if(raiz != NULL){
+        if(raiz.codigo_disciplina == codigo_curso){
+            printf("Nome: %s\n", raiz.nome_disciplina);
+            printf("Codigo: %d\n", raiz.codigo_disciplina);
+            printf("Periodo: %d\n", raiz.periodo);
+            printf("-------------------------");
+        }
+
+        mostrar_disciplinascurso(raiz.esq, codigo_curso);
+        mostrar_disciplinascurso(raiz.dir, codigo_curso);
+    }
+}
+
+// função para exibição de todas as disciplinas que um determinado aluno está matriculado
+void mostrar_disciplinasaluno(Arv_Matricula *raiz, int codigo_aluno){
+    if(raiz != NULL){
+        if(raiz.codigo_disciplina == codigo_aluno){
+            printf("Codigo: %d - Disciplina: %s\n", raiz.codigo_disciplina, raiz.nome_disciplina);
+        }
+
+        mostrar_disciplinasaluno(raiz.esq, codigo_aluno);
+        mostrar_disciplinasaluno(raiz.dir, codigo_aluno);
+    }
+}

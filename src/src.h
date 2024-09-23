@@ -91,4 +91,9 @@ int notas_disciplina_periodo(Arv_Notas *n, int periodo);
 
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
 
+//by crysmorys 23/09 pela manhã
+void mostrar_alunoscurso(Arv_Matricula *raiz, int codigo_curso);
+void mostrar_disciplinascurso(Arv_Disciplina *raiz, int codigo_curso);
+void mostrar_disciplinasaluno(Arv_Matricula *raiz, int codigo_aluno);
+
 #endif 
