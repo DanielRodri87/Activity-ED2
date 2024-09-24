@@ -48,6 +48,7 @@ typedef struct arv_disciplina
     int codigo_disciplina;
     char nome_disciplina[100];
     int periodo;
+    int carga_horaria;
 
     struct arv_disciplina *esq;
     struct arv_disciplina *dir;
@@ -92,16 +93,15 @@ int notas_disciplina_periodo(Arv_Notas *n, int periodo);
 
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
 
-//by crysmorys 24/09 pela manhã
+
 void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso);
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
 void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
 void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
-
-//by crysmorys 24/09 meio dia
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
 void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
+void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina);
 
 
 #endif 

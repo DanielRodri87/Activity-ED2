@@ -426,3 +426,65 @@ void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_discip
         }
     } 
 }
+
+//exibição da nota de uma disciplina de um determinado aluno, mostrando o período e a carga horária da disciplina. 
+void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina){
+    Alunos *aluno_atual = alunos;
+    int aluno_encontrado = 0;
+    int disciplina_encontrada = 0;
+    int nota_encontrada = 0;
+
+    while(aluno_atual != NULL && aluno_atual->matricula != matricula){
+        aluno_atual = aluno_atual->prox;
+    }
+
+    if(aluno_atual != NULL){
+        aluno_encontrado = 1;
+    }else{
+        printf("Aluno nao encontrado.\n");
+    }
+
+    if(aluno_encontrado){
+        Arv_Cursos *curso_atual = aluno_atual->codigo_curso;
+        if(curso_atual == NULL){
+            printf("Curso nao encontrado.\n");
+        }else{
+            Arv_Disciplina *disciplina_atual = curso_atual->disciplina;
+            Arv_Notas *nota_atual = aluno_atual->notas;
+
+            while((disciplina_atual != NULL && disciplina_atual->codigo_disciplina != codigo_disciplina) || (nota_atual != NULL && nota_atual->codigo_disciplina != codigo_disciplina)){
+
+                if(codigo_disciplina > disciplina_atual->codigo_disciplina){
+                    disciplina_atual = disciplina_atual->dir;
+                }else{
+                    disciplina_atual = disciplina_atual->esq;
+                }
+
+                if(codigo_disciplina > nota_atual->codigo_disciplina){
+                    nota_atual = nota_atual->dir;
+                }else{
+                    nota_atual = nota_atual->esq;
+                }
+            }
+
+            if(disciplina_atual != NULL){
+                disciplina_encontrada = 1;
+            }else{
+                printf("Disciplina nao encontrada.\n");
+            }
+
+            if(nota_atual != NULL){
+                nota_encontrada = 1;
+            }else{
+                printf("Nota não encontrada.\n");
+            }
+
+            if(disciplina_encontrada && nota_encontrada){
+                printf("Disciplina: %s\n", disciplina_atual->nome_disciplina);
+                printf("Periodo: %d\n", disciplina_atual->periodo);
+                printf("Carga Horaria: %dh\n", disciplina_atual->carga_horaria);
+                printf("Nota final: %.2f\n", nota_atual->nota_final);
+            }
+        }
+    }
+}
