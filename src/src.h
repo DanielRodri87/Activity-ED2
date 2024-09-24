@@ -99,5 +99,8 @@ void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
 void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
+//by crysmorys 24/09 meio dia
+void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
+
 
 #endif 

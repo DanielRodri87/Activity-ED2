@@ -293,4 +293,78 @@ void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina){
     }
 }
 
+// função para permitir a remoção de uma disciplina da árvore de matrícula de um determinado aluno.
+void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
+    if(*raiz != NULL){
+        Arv_Matricula *atual = *raiz;
+        Arv_Matricula *pai = NULL;
+        int encontrado = 0;
 
+        while (atual != NULL){
+            if(atual->codigo_disciplina == codigo_disciplina){
+                encontrado = 1;
+                break;
+            }
+
+            pai = atual;
+            if(codigo_disciplina < atual->codigo_disciplina){
+                atual = atual->esq;
+            }else{
+                atual = atual->dir;
+            }
+        }
+
+        if(encontrado){
+            if(atual->esq == NULL && atual->dir == NULL){
+                if(pai == NULL){
+                    *raiz = NULL;
+                }else if(pai->esq == atual){
+                    pai->esq = NULL;
+                }else{
+                    pai->dir = NULL;
+                }
+            }
+
+            else if(atual->esq == NULL){
+                if(pai == NULL){
+                    *raiz = atual->dir;
+                }else if(pai->esq == atual){
+                    pai->esq = atual->dir;
+                }else{
+                    pai->dir = atual->dir;
+                }
+            }else if(atual->dir == NULL){
+                if(pai == NULL){
+                    *raiz = atual->esq;
+                }else if(pai->esq == atual){
+                    pai->esq = atual->esq;
+                }else{
+                    pai->dir = atual->esq;
+                }
+            }
+
+            else{
+
+                Arv_Matricula *menor_no = atual->dir;
+                Arv_Matricula *menor_nopai = atual;
+
+                while(menor_no->esq != NULL){
+                    menor_nopai = menor_no;
+                    menor_no = menor_no->esq;
+                }
+
+                atual->codigo_disciplina = menor_no->codigo_disciplina;
+
+                if(menor_nopai->esq == menor_no){
+                    menor_nopai->esq = menor_no->dir;
+                }else{
+                    menor_nopai->dir = menor_no->dir;
+                }
+            }
+
+            free(atual);
+        }
+
+    }
+
+}
