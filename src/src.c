@@ -220,44 +220,77 @@ void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
 }
 
 // função para exibição de todos os alunos de um determinado curso
-void mostrar_alunoscurso(Arv_Matricula *raiz, int codigo_curso){
-    if (raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_curso){
-            printf("Aluno: %s\n", raiz.nome);
-            printf("Matricula: %d\n", raiz.matricula);
-            printf("-------------------------");
-
+void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
+    if(curso != NULL){
+        if(curso->codigo_curso == codigo_curso){
+            Alunos *aluno_atual = curso->alunos;
+            while(aluno_atual != NULL){
+                printf("Nome: %s\nMatricula: %d\n", aluno_atual->nome, aluno_atual->matricula);
+                aluno_atual = aluno_atual->prox;
+            }
         }
 
-        mostrar_alunoscurso(raiz.esq, codigo_curso);
-        mostrar_alunoscurso(raiz.dir, codigo_curso);
-
+        exibir_alunosporcurso(curso->esq, codigo_curso);
+        exibir_alunosporcurso(curso->dir, codigo_curso);
     }
 }
 
-// função para exibição de todas as disciplinas de um determinado curso
-void mostrar_disciplinascurso(Arv_Disciplina *raiz, int codigo_curso){
-    if(raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_curso){
-            printf("Nome: %s\n", raiz.nome_disciplina);
-            printf("Codigo: %d\n", raiz.codigo_disciplina);
-            printf("Periodo: %d\n", raiz.periodo);
-            printf("-------------------------");
+// função para exibição de todas as disciplinas de um determinado curso (as duas funções se complementam)
+void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso){
+    if (curso != NULL){
+        if(curso->codigo_curso == codigo_curso){
+            Arv_Disciplina *disciplina_atual = curso->disciplina;
+
+            exibir_disciplinasporcurso_recursivamente(disciplina_atual);
         }
 
-        mostrar_disciplinascurso(raiz.esq, codigo_curso);
-        mostrar_disciplinascurso(raiz.dir, codigo_curso);
+        exibir_disciplinasporcurso(curso->esq, codigo_curso);
+        exibir_disciplinasporcurso(curso->dir, codigo_curso);
+    }
+
+}
+
+void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina){
+    if(disciplina != NULL){
+        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->periodo, disciplina->nome_disciplina);
+
+        exibir_disciplinasporcurso_recursivamente(disciplina->esq);
+        exibir_disciplinasporcurso_recursivamente(disciplina->dir);
     }
 }
 
-// função para exibição de todas as disciplinas que um determinado aluno está matriculado
-void mostrar_disciplinasaluno(Arv_Matricula *raiz, int codigo_aluno){
-    if(raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_aluno){
-            printf("Codigo: %d - Disciplina: %s\n", raiz.codigo_disciplina, raiz.nome_disciplina);
+// função para exibição de todas as disciplinas que um determinado aluno está matriculado (as duas funções se complementam)
+
+void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno){
+    if(curso != NULL){
+        if(curso->codigo_curso != -1){
+            Alunos *aluno_atual = curso->alunos;
+            while(aluno_atual != NULL){
+                if(aluno_atual->matricula == matricula_aluno){
+                    Arv_Disciplina *disciplina_atual = curso->disciplina;
+                    while(disciplina_atual != NULL){
+                        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina_atual->codigo_disciplina, disciplina_atual->nome_disciplina, disciplina_atual->periodo);
+
+                        exibir_disciplinasporalunos_recursivamente(disciplina_atual);
+                        break;
+                    }
+                }
+                aluno_atual = aluno_atual->prox;
+            }
         }
 
-        mostrar_disciplinasaluno(raiz.esq, codigo_aluno);
-        mostrar_disciplinasaluno(raiz.dir, codigo_aluno);
+        exibir_disciplinasporaluno(curso->esq, matricula_aluno);
+        exibir_disciplinasporaluno(curso->dir, matricula_aluno);
     }
 }
+
+void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina){
+    if(disciplina != NULL){
+        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->nome_disciplina, disciplina->periodo);
+
+        exibir_disciplinasporalunos_recursivamente(disciplina->esq);
+        exibir_disciplinasporalunos_recursivamente(disciplina->dir);
+    }
+}
+
+

@@ -63,6 +63,7 @@ typedef struct arv_cursos
     struct arv_cursos *esq;  
     struct arv_cursos *dir; 
     Arv_Disciplina *disciplina;
+    Alunos *alunos; 
 } Arv_Cursos;
 
 typedef struct alunos
@@ -91,9 +92,12 @@ int notas_disciplina_periodo(Arv_Notas *n, int periodo);
 
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
 
-//by crysmorys 23/09 pela manhã
-void mostrar_alunoscurso(Arv_Matricula *raiz, int codigo_curso);
-void mostrar_disciplinascurso(Arv_Disciplina *raiz, int codigo_curso);
-void mostrar_disciplinasaluno(Arv_Matricula *raiz, int codigo_aluno);
+//by crysmorys 24/09 pela manhã
+void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso);
+void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
+void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
+void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
+void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
+
 
 #endif 
