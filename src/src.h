@@ -101,6 +101,7 @@ void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
 //by crysmorys 24/09 meio dia
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
+void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
 
 
 #endif 

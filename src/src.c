@@ -368,3 +368,61 @@ void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
     }
 
 }
+
+void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria){
+
+    int curso_encontrado = 0;
+    int periodo_valido = 0;
+    int cargahoraria_valida = 0;
+
+    while(curso != NULL && curso->codigo_curso != codigo_curso){
+        if(codigo_curso < curso->codigo_curso){
+            curso = curso->esq;
+        }else{
+            curso = curso->dir;
+        }
+    }
+
+    if(curso != NULL){
+        curso_encontrado = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo >= 1 && periodo <= curso->quantidade_periodos){
+        periodo_valido = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo_valido != 0 && cargahoraria >= 30 && cargahoraria <= 90 && cargahoraria % 15 == 0){
+        cargahoraria_valida = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo_valido != 0 && cargahoraria_valida != 0){
+
+        Arv_Disciplina *nova_disciplina = (Arv_Disciplina*)malloc(sizeof(Arv_Disciplina));
+        nova_disciplina->codigo_disciplina = codigo_disciplina;
+        strcpy(nova_disciplina->nome_disciplina, nome_disciplina);
+        nova_disciplina->esq = NULL;
+        nova_disciplina->dir = NULL;
+
+        if(curso->disciplina == NULL){
+            curso->disciplina = nova_disciplina;
+        }else{
+            Arv_Disciplina *atual = curso->disciplina;
+            Arv_Disciplina *anterior = NULL;
+
+            while(atual != NULL){
+                anterior = atual;
+                if(codigo_disciplina < atual->codigo_disciplina){
+                    atual = atual->esq;
+                }else{
+                    atual = atual->dir;
+                }
+            }
+
+            if(codigo_disciplina < anterior->codigo_disciplina){
+                anterior->esq = nova_disciplina;
+            }else{
+                anterior->dir = nova_disciplina;
+            }
+        }
+    } 
+}
