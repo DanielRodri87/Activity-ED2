@@ -220,44 +220,271 @@ void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
 }
 
 // função para exibição de todos os alunos de um determinado curso
-void mostrar_alunoscurso(Arv_Matricula *raiz, int codigo_curso){
-    if (raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_curso){
-            printf("Aluno: %s\n", raiz.nome);
-            printf("Matricula: %d\n", raiz.matricula);
-            printf("-------------------------");
-
+void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
+    if(curso != NULL){
+        if(curso->codigo_curso == codigo_curso){
+            Alunos *aluno_atual = curso->alunos;
+            while(aluno_atual != NULL){
+                printf("Nome: %s\nMatricula: %d\n", aluno_atual->nome, aluno_atual->matricula);
+                aluno_atual = aluno_atual->prox;
+            }
         }
 
-        mostrar_alunoscurso(raiz.esq, codigo_curso);
-        mostrar_alunoscurso(raiz.dir, codigo_curso);
-
+        exibir_alunosporcurso(curso->esq, codigo_curso);
+        exibir_alunosporcurso(curso->dir, codigo_curso);
     }
 }
 
-// função para exibição de todas as disciplinas de um determinado curso
-void mostrar_disciplinascurso(Arv_Disciplina *raiz, int codigo_curso){
-    if(raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_curso){
-            printf("Nome: %s\n", raiz.nome_disciplina);
-            printf("Codigo: %d\n", raiz.codigo_disciplina);
-            printf("Periodo: %d\n", raiz.periodo);
-            printf("-------------------------");
+// função para exibição de todas as disciplinas de um determinado curso (as duas funções se complementam)
+void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso){
+    if (curso != NULL){
+        if(curso->codigo_curso == codigo_curso){
+            Arv_Disciplina *disciplina_atual = curso->disciplina;
+
+            exibir_disciplinasporcurso_recursivamente(disciplina_atual);
         }
 
-        mostrar_disciplinascurso(raiz.esq, codigo_curso);
-        mostrar_disciplinascurso(raiz.dir, codigo_curso);
+        exibir_disciplinasporcurso(curso->esq, codigo_curso);
+        exibir_disciplinasporcurso(curso->dir, codigo_curso);
+    }
+
+}
+
+void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina){
+    if(disciplina != NULL){
+        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->periodo, disciplina->nome_disciplina);
+
+        exibir_disciplinasporcurso_recursivamente(disciplina->esq);
+        exibir_disciplinasporcurso_recursivamente(disciplina->dir);
     }
 }
 
-// função para exibição de todas as disciplinas que um determinado aluno está matriculado
-void mostrar_disciplinasaluno(Arv_Matricula *raiz, int codigo_aluno){
-    if(raiz != NULL){
-        if(raiz.codigo_disciplina == codigo_aluno){
-            printf("Codigo: %d - Disciplina: %s\n", raiz.codigo_disciplina, raiz.nome_disciplina);
+// função para exibição de todas as disciplinas que um determinado aluno está matriculado (as duas funções se complementam)
+
+void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno){
+    if(curso != NULL){
+        if(curso->codigo_curso != -1){
+            Alunos *aluno_atual = curso->alunos;
+            while(aluno_atual != NULL){
+                if(aluno_atual->matricula == matricula_aluno){
+                    Arv_Disciplina *disciplina_atual = curso->disciplina;
+                    while(disciplina_atual != NULL){
+                        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina_atual->codigo_disciplina, disciplina_atual->nome_disciplina, disciplina_atual->periodo);
+
+                        exibir_disciplinasporalunos_recursivamente(disciplina_atual);
+                        break;
+                    }
+                }
+                aluno_atual = aluno_atual->prox;
+            }
         }
 
-        mostrar_disciplinasaluno(raiz.esq, codigo_aluno);
-        mostrar_disciplinasaluno(raiz.dir, codigo_aluno);
+        exibir_disciplinasporaluno(curso->esq, matricula_aluno);
+        exibir_disciplinasporaluno(curso->dir, matricula_aluno);
+    }
+}
+
+void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina){
+    if(disciplina != NULL){
+        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->nome_disciplina, disciplina->periodo);
+
+        exibir_disciplinasporalunos_recursivamente(disciplina->esq);
+        exibir_disciplinasporalunos_recursivamente(disciplina->dir);
+    }
+}
+
+// função para permitir a remoção de uma disciplina da árvore de matrícula de um determinado aluno.
+void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
+    if(*raiz != NULL){
+        Arv_Matricula *atual = *raiz;
+        Arv_Matricula *pai = NULL;
+        int encontrado = 0;
+
+        while (atual != NULL){
+            if(atual->codigo_disciplina == codigo_disciplina){
+                encontrado = 1;
+                break;
+            }
+
+            pai = atual;
+            if(codigo_disciplina < atual->codigo_disciplina){
+                atual = atual->esq;
+            }else{
+                atual = atual->dir;
+            }
+        }
+
+        if(encontrado){
+            if(atual->esq == NULL && atual->dir == NULL){
+                if(pai == NULL){
+                    *raiz = NULL;
+                }else if(pai->esq == atual){
+                    pai->esq = NULL;
+                }else{
+                    pai->dir = NULL;
+                }
+            }
+
+            else if(atual->esq == NULL){
+                if(pai == NULL){
+                    *raiz = atual->dir;
+                }else if(pai->esq == atual){
+                    pai->esq = atual->dir;
+                }else{
+                    pai->dir = atual->dir;
+                }
+            }else if(atual->dir == NULL){
+                if(pai == NULL){
+                    *raiz = atual->esq;
+                }else if(pai->esq == atual){
+                    pai->esq = atual->esq;
+                }else{
+                    pai->dir = atual->esq;
+                }
+            }
+
+            else{
+
+                Arv_Matricula *menor_no = atual->dir;
+                Arv_Matricula *menor_nopai = atual;
+
+                while(menor_no->esq != NULL){
+                    menor_nopai = menor_no;
+                    menor_no = menor_no->esq;
+                }
+
+                atual->codigo_disciplina = menor_no->codigo_disciplina;
+
+                if(menor_nopai->esq == menor_no){
+                    menor_nopai->esq = menor_no->dir;
+                }else{
+                    menor_nopai->dir = menor_no->dir;
+                }
+            }
+
+            free(atual);
+        }
+
+    }
+
+}
+
+void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria){
+
+    int curso_encontrado = 0;
+    int periodo_valido = 0;
+    int cargahoraria_valida = 0;
+
+    while(curso != NULL && curso->codigo_curso != codigo_curso){
+        if(codigo_curso < curso->codigo_curso){
+            curso = curso->esq;
+        }else{
+            curso = curso->dir;
+        }
+    }
+
+    if(curso != NULL){
+        curso_encontrado = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo >= 1 && periodo <= curso->quantidade_periodos){
+        periodo_valido = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo_valido != 0 && cargahoraria >= 30 && cargahoraria <= 90 && cargahoraria % 15 == 0){
+        cargahoraria_valida = 1;
+    }
+
+    if(curso_encontrado != 0 && periodo_valido != 0 && cargahoraria_valida != 0){
+
+        Arv_Disciplina *nova_disciplina = (Arv_Disciplina*)malloc(sizeof(Arv_Disciplina));
+        nova_disciplina->codigo_disciplina = codigo_disciplina;
+        strcpy(nova_disciplina->nome_disciplina, nome_disciplina);
+        nova_disciplina->esq = NULL;
+        nova_disciplina->dir = NULL;
+
+        if(curso->disciplina == NULL){
+            curso->disciplina = nova_disciplina;
+        }else{
+            Arv_Disciplina *atual = curso->disciplina;
+            Arv_Disciplina *anterior = NULL;
+
+            while(atual != NULL){
+                anterior = atual;
+                if(codigo_disciplina < atual->codigo_disciplina){
+                    atual = atual->esq;
+                }else{
+                    atual = atual->dir;
+                }
+            }
+
+            if(codigo_disciplina < anterior->codigo_disciplina){
+                anterior->esq = nova_disciplina;
+            }else{
+                anterior->dir = nova_disciplina;
+            }
+        }
+    } 
+}
+
+//exibição da nota de uma disciplina de um determinado aluno, mostrando o período e a carga horária da disciplina. 
+void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina){
+    Alunos *aluno_atual = alunos;
+    int aluno_encontrado = 0;
+    int disciplina_encontrada = 0;
+    int nota_encontrada = 0;
+
+    while(aluno_atual != NULL && aluno_atual->matricula != matricula){
+        aluno_atual = aluno_atual->prox;
+    }
+
+    if(aluno_atual != NULL){
+        aluno_encontrado = 1;
+    }else{
+        printf("Aluno nao encontrado.\n");
+    }
+
+    if(aluno_encontrado){
+        Arv_Cursos *curso_atual = aluno_atual->codigo_curso;
+        if(curso_atual == NULL){
+            printf("Curso nao encontrado.\n");
+        }else{
+            Arv_Disciplina *disciplina_atual = curso_atual->disciplina;
+            Arv_Notas *nota_atual = aluno_atual->notas;
+
+            while((disciplina_atual != NULL && disciplina_atual->codigo_disciplina != codigo_disciplina) || (nota_atual != NULL && nota_atual->codigo_disciplina != codigo_disciplina)){
+
+                if(codigo_disciplina > disciplina_atual->codigo_disciplina){
+                    disciplina_atual = disciplina_atual->dir;
+                }else{
+                    disciplina_atual = disciplina_atual->esq;
+                }
+
+                if(codigo_disciplina > nota_atual->codigo_disciplina){
+                    nota_atual = nota_atual->dir;
+                }else{
+                    nota_atual = nota_atual->esq;
+                }
+            }
+
+            if(disciplina_atual != NULL){
+                disciplina_encontrada = 1;
+            }else{
+                printf("Disciplina nao encontrada.\n");
+            }
+
+            if(nota_atual != NULL){
+                nota_encontrada = 1;
+            }else{
+                printf("Nota não encontrada.\n");
+            }
+
+            if(disciplina_encontrada && nota_encontrada){
+                printf("Disciplina: %s\n", disciplina_atual->nome_disciplina);
+                printf("Periodo: %d\n", disciplina_atual->periodo);
+                printf("Carga Horaria: %dh\n", disciplina_atual->carga_horaria);
+                printf("Nota final: %.2f\n", nota_atual->nota_final);
+            }
+        }
     }
 }
