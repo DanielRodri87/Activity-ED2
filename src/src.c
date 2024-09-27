@@ -504,3 +504,45 @@ void exibir_notadisciplina(Alunos *alunos, Arv_Cursos *raiz_cursos, int matricul
     else
         exibir_informacoes(disciplina_atual, nota_atual);
 }
+
+// Mostrar todas as notas de disciplinas de um determinado período de um determinado aluno. 
+void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int periodo)
+{
+    if (notas != NULL)
+    {   
+        exibir_notas_periodo(notas->esq, disciplinas, periodo);
+
+        Arv_Disciplina *disciplina = buscar_disciplina_por_codigo(disciplinas, notas->codigo_disciplina);
+        if (disciplina != NULL && disciplina->periodo == periodo)
+            printf("Disciplina: %s | Semestre: %.2f | Nota final: %.2f\n", 
+                disciplina->nome_disciplina, notas->semestre, notas->nota_final);
+
+        exibir_notas_periodo(notas->dir, disciplinas, periodo);
+    }
+}
+
+Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo)
+{
+    Arv_Disciplina *aux;
+    if (disciplinas != NULL)
+    {
+        if (codigo == disciplinas->codigo_disciplina)
+            aux = disciplinas;
+        else if (codigo < disciplinas->codigo_disciplina)
+            aux = buscar_disciplina_por_codigo(disciplinas->esq, codigo);
+        else 
+            aux = buscar_disciplina_por_codigo(disciplinas->dir, codigo);
+    }
+
+    return (aux);
+
+}
+
+void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo)
+{
+    if (aluno != NULL)
+    {
+        printf("Notas do aluno %s no periodo %d:\n", aluno->nome, periodo);
+        exibir_notas_periodo(aluno->notas, disciplinas, periodo);
+    }
+}

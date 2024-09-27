@@ -92,16 +92,19 @@ void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
 int notas_disciplina_periodo(Arv_Notas *n, int periodo);
 
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
-
-
 void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso);
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
+
 void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
 void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
+
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
 void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
 void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina);
 
+void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int periodo);
+Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo);
+void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo);
 
 #endif 
