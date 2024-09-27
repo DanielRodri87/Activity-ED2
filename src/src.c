@@ -68,6 +68,25 @@ int cadastrar_matricula(Arv_Matricula **r, int matricula)
     return (insere); 
 }
 
+void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado)
+{
+    if (r != NULL)
+    {
+        if (r->codigo_disciplina == codigo)
+            *encontrado = 1;
+        else
+        {
+            if (codigo < r->codigo_disciplina)
+                buscar_matricula(r->esq, codigo, encontrado);
+            else
+                buscar_matricula(r->dir, codigo, encontrado);
+        }
+
+    }
+}
+
+
+
 
 int cadastrar_nota(Arv_Matricula **matricula, Arv_Notas **notas, int codigo_disciplina, float nota_final, float semestre)
 {
@@ -503,4 +522,140 @@ void exibir_notadisciplina(Alunos *alunos, Arv_Cursos *raiz_cursos, int matricul
         printf("Nota não encontrada.\n");
     else
         exibir_informacoes(disciplina_atual, nota_atual);
+}
+
+// Mostrar todas as notas de disciplinas de um determinado período de um determinado aluno. 
+void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int periodo)
+{
+    if (notas != NULL)
+    {   
+        exibir_notas_periodo(notas->esq, disciplinas, periodo);
+
+        Arv_Disciplina *disciplina = buscar_disciplina_por_codigo(disciplinas, notas->codigo_disciplina);
+        if (disciplina != NULL && disciplina->periodo == periodo)
+            printf("Disciplina: %s | Semestre: %.2f | Nota final: %.2f\n", 
+                disciplina->nome_disciplina, notas->semestre, notas->nota_final);
+
+        exibir_notas_periodo(notas->dir, disciplinas, periodo);
+    }
+}
+
+Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo)
+{
+    Arv_Disciplina *aux;
+    if (disciplinas != NULL)
+    {
+        if (codigo == disciplinas->codigo_disciplina)
+            aux = disciplinas;
+        else if (codigo < disciplinas->codigo_disciplina)
+            aux = buscar_disciplina_por_codigo(disciplinas->esq, codigo);
+        else 
+            aux = buscar_disciplina_por_codigo(disciplinas->dir, codigo);
+    }
+
+    return (aux);
+
+}
+
+void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo)
+{
+    if (aluno != NULL)
+    {
+        printf("Notas do aluno %s no periodo %d:\n", aluno->nome, periodo);
+        exibir_notas_periodo(aluno->notas, disciplinas, periodo);
+    }
+}
+
+// Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
+// mesma. 
+
+int ehfolha(Arv_Disciplina *r)
+{
+    int retorno = 0;
+    if (r != NULL)
+    {
+        if ((r->esq == NULL) && (r->dir == NULL))
+            retorno = 1;                
+    
+        ehfolha(r->esq);
+        ehfolha(r->dir);
+    }
+}
+
+int so_um_filho(Arv_Disciplina *r)
+{
+    int retorno = 0;
+    if (r != NULL)
+    {
+        if ((r->esq != NULL) || (r->dir != NULL))
+            retorno = 1;
+
+        so_um_filho(r->esq);
+        so_um_filho(r->dir);
+    }
+}
+
+Arv_Disciplina* menor_filho_esquerda_disciplina(Arv_Disciplina *r)
+{
+    Arv_Disciplina *aux;
+    aux = NULL;
+    if (r != NULL)
+    {
+        if (r->esq != NULL)
+            aux = menor_filho_esquerda_disciplina(r->esq);
+        
+    }
+    return (aux);
+}
+
+int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
+{
+    Arv_Disciplina *aux;
+    Arv_Disciplina *end_menor_filho;
+    if (*r != NULL)
+    {
+        int remove = 1;
+        if ((*r)->codigo_disciplina == codigo_disciplina)
+        {
+            if (ehfolha(*r))
+            {
+                aux = *r;
+                *r = NULL;
+                free(aux);
+            } else if (so_um_filho(*r))
+            {
+                end_menor_filho = menor_filho_esquerda_disciplina((*r)->dir);
+                (*r)->codigo_disciplina = end_menor_filho->codigo_disciplina;
+                remover_disciplina_xiii(&(*r)->dir, end_menor_filho->codigo_disciplina);
+            }
+        }
+    }
+}
+
+void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc){
+    int enc = 0;
+    if(r != NULL){
+        buscar_matricula(r->mat, cod_disc, &enc);
+        if(enc != 0)
+            *validar_disc = 1;
+        confirmar_remocao(r->prox, cod_disc, validar_disc);
+    }
+}
+
+int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, int codigo_disc)
+{
+    int remove = 0, confirmar_disc = 0;
+    if (*curso != NULL)
+    {
+        confirmar_remocao(alunos, codigo_disc, &confirmar_disc);
+        if (confirmar_disc != 0)
+        {
+            if ((*curso)->codigo_curso == id_curso)
+                remove = remover_disciplina_xiii(&(*curso)->disciplina, codigo_disc);   
+            else if (id_curso < (*curso)->codigo_curso)
+                remove = remover_disciplina_curso(&(*curso)->esq, alunos, id_curso, codigo_disc);
+            else
+                remove = remover_disciplina_curso(&(*curso)->dir, alunos, id_curso, codigo_disc);
+        }
+    }
 }
