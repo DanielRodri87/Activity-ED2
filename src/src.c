@@ -29,6 +29,11 @@ void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, cha
     }
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// II - Cadastrar cursos a qualquer momento na árvore de curso, de forma que o usuário não precise cadastrar
+// as disciplinas para permitir o cadastro do curso. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+
 void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos)
 {
     if(*curso == NULL){
@@ -48,6 +53,10 @@ void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curs
     }
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// Cadastrar uma matrícula, onde a mesma é uma árvore organizada e contendo somente um código de
+// uma disciplina do curso do aluno. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 int cadastrar_matricula(Arv_Matricula **r, int matricula)
 {
     int insere = 1;
@@ -85,8 +94,11 @@ void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado)
     }
 }
 
-
-
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// Cadastrar Notas, permitir o cadastro de notas somente de disciplinas que estejam na árvore de
+// matricula, e quando a nota for cadastrada a disciplina deve ser removida da árvore de matricula para
+// árvore de notas. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
 int cadastrar_nota(Arv_Matricula **matricula, Arv_Notas **notas, int codigo_disciplina, float nota_final, float semestre)
 {
@@ -183,6 +195,9 @@ Arv_Notas* inserir_nota(Arv_Notas* raiz, Arv_Notas* nova_nota)
     return (resultado);
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// VII - Mostrar todos os cursos do Campus
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 void exibir_curso(Arv_Cursos *r)
 {
     if (r != NULL)
@@ -193,7 +208,9 @@ void exibir_curso(Arv_Cursos *r)
     }
 
 }
-
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// IX - Mostrar todas as disciplinas de um determinado período de um curso. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 void exibir_disciplina_periodo(Arv_Cursos *r, int periodo)
 {
     if (r != NULL)
@@ -221,6 +238,9 @@ int notas_disciplina_periodo(Arv_Notas *n, int periodo)
     }
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// XI -  Mostrar todas as notas de disciplinas de um determinado período de um determinado aluno. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
 {
     if (r == NULL)
@@ -566,9 +586,10 @@ void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo
     }
 }
 
-// Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// XIII - Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
 // mesma. 
-
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 int ehfolha(Arv_Disciplina *r)
 {
     int retorno = 0;
@@ -665,9 +686,11 @@ int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, i
     }
 }
 
-
-// Mostrar o histórico de um determinado aluno, contendo o nome do curso, as disciplinas e sua respectiva
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// XV - Mostrar o histórico de um determinado aluno, contendo o nome do curso, as disciplinas e sua respectiva
 // nota organizadas pelo período que a disciplina está cadastrada no curso. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+
 void buscar_aluno(Alunos *aluno, int matricula, Arv_Cursos *r)
 {
     if (aluno != NULL)
