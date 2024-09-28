@@ -19,7 +19,7 @@ Daniel: I, V, VII, IX, XI, XIII, XV
 
 FEITOS:
 CRISTINA: I
-DANIEL: II, III, V, VII, IX e XI, XIII, 
+DANIEL: II, III, V, VII, IX e XI, XIII, XV
 
 */
 
@@ -111,6 +111,9 @@ int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, i
 void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc);
 int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina);
 
+void exibir_historico(Alunos *aluno, Arv_Cursos *r);
+void buscar_curso(Alunos *aluno, Arv_Cursos *r);
+void buscar_aluno(Alunos *aluno, int matricula, Arv_Cursos *r);
 
 
 #endif 
