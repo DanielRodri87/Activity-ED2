@@ -603,7 +603,8 @@ int ehfolha(Arv_Disciplina *r)
     }
 }
 
-Arv_Disciplina *so_um_filho(Arv_Disciplina *r) {
+Arv_Disciplina *so_um_filho(Arv_Disciplina *r)
+{
     Arv_Disciplina *filho = NULL;
 
     if (r->esq != NULL && r->dir == NULL) 
@@ -722,7 +723,7 @@ void buscar_curso(Alunos *aluno, Arv_Cursos *r)
             buscar_curso(aluno, r->dir);
     }
 }
-''
+
 void exibir_historico(Alunos *aluno, Arv_Cursos *r)
 {
     printf("Disciplinas e notas: \n");
