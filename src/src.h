@@ -23,6 +23,18 @@ DANIEL: II, III, V, VII, IX e XI, XIII, XV
 
 */
 
+typedef struct arv_disciplina
+{
+    int codigo_disciplina;
+    char nome_disciplina[100];
+    int periodo;
+    int carga_horaria;
+
+    struct arv_disciplina *esq;
+    struct arv_disciplina *dir;
+
+} Arv_Disciplina;
+
 typedef struct arv_matricula
 {
     int codigo_disciplina;
@@ -43,17 +55,15 @@ typedef struct arv_notas
     struct arv_notas *dir;
 } Arv_Notas;
 
-typedef struct arv_disciplina
+typedef struct alunos
 {
-    int codigo_disciplina;
-    char nome_disciplina[100];
-    int periodo;
-    int carga_horaria;
-
-    struct arv_disciplina *esq;
-    struct arv_disciplina *dir;
-
-} Arv_Disciplina;
+    int matricula;
+    char nome[100];
+    int codigo_curso;
+    Arv_Notas *notas;
+    Arv_Matricula *mat;
+    struct alunos *prox;
+} Alunos;
 
 typedef struct arv_cursos
 {
@@ -66,17 +76,6 @@ typedef struct arv_cursos
     Arv_Disciplina *disciplina;
     Alunos *alunos; 
 } Arv_Cursos;
-
-typedef struct alunos
-{
-    int matricula;
-    char nome[100];
-    int codigo_curso;
-    Arv_Notas *notas;
-    Arv_Matricula *mat;
-    struct alunos *prox;
-} Alunos;
-
 
 void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, char nome[], int codigo_curso);
 void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
@@ -101,7 +100,7 @@ void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
 void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
-void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina);
+void exibir_notadisciplina(Alunos *alunos, Arv_Cursos *raiz_cursos, int matricula, int codigo_disciplina);
 
 void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int periodo);
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo);
@@ -112,8 +111,8 @@ void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc);
 int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina);
 
 void exibir_historico(Alunos *aluno, Arv_Cursos *r);
-void buscar_curso(Alunos *aluno, Arv_Cursos *r);
-void buscar_aluno(Alunos *aluno, int matricula, Arv_Cursos *r);
+void buscar_curso_aluno(Alunos *aluno, Arv_Cursos *r);
+void buscar_aluno_xv(Alunos *aluno, int matricula, Arv_Cursos *r);
 
 
 #endif 

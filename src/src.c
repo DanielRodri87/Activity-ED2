@@ -301,21 +301,31 @@ void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina){
 
 // função para exibição de todas as disciplinas que um determinado aluno está matriculado (as duas funções se complementam)
 
-void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno){
-    if(curso != NULL){
-        if(curso->codigo_curso != -1){
-            Alunos *aluno_atual = curso->alunos;
-            while(aluno_atual != NULL){
-                if(aluno_atual->matricula == matricula_aluno){
-                    Arv_Disciplina *disciplina_atual = curso->disciplina;
-                    while(disciplina_atual != NULL){
-                        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina_atual->codigo_disciplina, disciplina_atual->nome_disciplina, disciplina_atual->periodo);
+void exibir_disciplinas_por_aluno_recursivo(Arv_Disciplina *disciplina_atual)
+{
+    if (disciplina_atual != NULL)
+    {
+        printf("Código: %d - Período: %d - Nome: %s\n", 
+                disciplina_atual->codigo_disciplina, 
+                disciplina_atual->periodo, 
+                disciplina_atual->nome_disciplina);
 
-                        exibir_disciplinasporalunos_recursivamente(disciplina_atual);
-                        break;
-                    }
-                }
-                aluno_atual = aluno_atual->prox;
+        exibir_disciplinas_por_aluno_recursivo(disciplina_atual->esq);
+        exibir_disciplinas_por_aluno_recursivo(disciplina_atual->dir);
+    }
+}
+
+void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno) 
+{
+    if (curso != NULL)
+    {
+        if (curso->codigo_curso != -1)
+        {
+            Alunos *aluno_atual = curso->alunos;
+            if (aluno_atual != NULL && aluno_atual->matricula == matricula_aluno)
+            {
+                printf("Disciplinas do aluno %d:\n", matricula_aluno);
+                exibir_disciplinas_por_aluno_recursivo(curso->disciplina);
             }
         }
 
@@ -324,14 +334,6 @@ void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno){
     }
 }
 
-void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina){
-    if(disciplina != NULL){
-        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->nome_disciplina, disciplina->periodo);
-
-        exibir_disciplinasporalunos_recursivamente(disciplina->esq);
-        exibir_disciplinasporalunos_recursivamente(disciplina->dir);
-    }
-}
 
 // função para permitir a remoção de uma disciplina da árvore de matrícula de um determinado aluno.
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
@@ -631,10 +633,12 @@ Arv_Disciplina *menor_filho_esquerda_disciplina(Arv_Disciplina *r)
 int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
 {
     Arv_Disciplina *aux;
+    Arv_Disciplina *end_filho;
     Arv_Disciplina *end_menor_filho;
+    int retorno = 0;
+
     if (*r != NULL)
     {
-        int remove = 1;
         if ((*r)->codigo_disciplina == codigo_disciplina)
         {
             if (ehfolha(*r))
@@ -642,20 +646,30 @@ int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
                 aux = *r;
                 *r = NULL;
                 free(aux);
-            } else if (Arv_Disciplina *end_filho = so_um_filho(*r))
+                retorno = 1;
+            }
+            else if ((end_filho = so_um_filho(*r)) != NULL)
             {
                 aux = *r;
                 *r = end_filho;
                 free(aux);
-            } else
+                retorno = 1;
+            }
+            else
             {
                 end_menor_filho = menor_filho_esquerda_disciplina((*r)->dir);
                 (*r)->codigo_disciplina = end_menor_filho->codigo_disciplina;
-                remover_disciplina_xiii(&(*r)->dir, end_menor_filho->codigo_disciplina);
+                retorno = remover_disciplina_xiii(&(*r)->dir, end_menor_filho->codigo_disciplina);
             }
         }
+        else if (codigo_disciplina < (*r)->codigo_disciplina)
+            retorno = remover_disciplina_xiii(&(*r)->esq, codigo_disciplina);
+        else
+            retorno = remover_disciplina_xiii(&(*r)->dir, codigo_disciplina);
     }
+    return (retorno);
 }
+
 
 void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc)
 {
@@ -692,23 +706,23 @@ int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, i
 // nota organizadas pelo período que a disciplina está cadastrada no curso. 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-void buscar_aluno(Alunos *aluno, int matricula, Arv_Cursos *r)
+void buscar_aluno_xv(Alunos *aluno, int matricula, Arv_Cursos *r)
 {
     if (aluno != NULL)
     {
         if (aluno->matricula == matricula)
         {
-            printf("Aluno: %s", aluno->nome);
-            buscar_curso(aluno, r);
+            printf("Aluno: %s\n", aluno->nome);
+            buscar_curso(r, aluno->codigo_curso); 
         }
         else
         {
-            buscar_aluno(aluno->prox, matricula, r);
+            buscar_aluno_xv(aluno->prox, matricula, r);
         }
     }
 }
 
-void buscar_curso(Alunos *aluno, Arv_Cursos *r)
+void buscar_curso_aluno(Alunos *aluno, Arv_Cursos *r)
 {
     if (r != NULL)
     {
@@ -718,9 +732,9 @@ void buscar_curso(Alunos *aluno, Arv_Cursos *r)
             exibir_historico(aluno, r);
         }
         else if (aluno->codigo_curso < r->codigo_curso)
-            buscar_curso(aluno, r->esq);
+            buscar_curso_aluno(aluno, r->esq);
         else
-            buscar_curso(aluno, r->dir);
+            buscar_curso_aluno(aluno, r->dir);
     }
 }
 
@@ -730,9 +744,10 @@ void exibir_historico(Alunos *aluno, Arv_Cursos *r)
     for (int i = 0; i < r->quantidade_periodos; i++)
     {
         printf("%d° Período\n", i + 1);
-        exibir_disciplina_periodo(r, aluno->codigo_curso, i + 1);
-        exibir_notas_periodo(aluno->notas, i + 1);
+        exibir_disciplina_periodo(r, i + 1);
+        exibir_notas_periodo(aluno->notas, r->disciplina, i + 1);
     }
 }
+
 
 
