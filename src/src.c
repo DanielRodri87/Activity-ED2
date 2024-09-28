@@ -582,20 +582,18 @@ int ehfolha(Arv_Disciplina *r)
     }
 }
 
-int so_um_filho(Arv_Disciplina *r)
-{
-    int retorno = 0;
-    if (r != NULL)
-    {
-        if ((r->esq != NULL) || (r->dir != NULL))
-            retorno = 1;
+Arv_Disciplina *so_um_filho(Arv_Disciplina *r) {
+    Arv_Disciplina *filho = NULL;
 
-        so_um_filho(r->esq);
-        so_um_filho(r->dir);
-    }
+    if (r->esq != NULL && r->dir == NULL) 
+        filho = r->esq; 
+    else if (r->esq == NULL && r->dir != NULL)
+        filho = r->dir;
+
+    return filho;
 }
 
-Arv_Disciplina* menor_filho_esquerda_disciplina(Arv_Disciplina *r)
+Arv_Disciplina *menor_filho_esquerda_disciplina(Arv_Disciplina *r)
 {
     Arv_Disciplina *aux;
     aux = NULL;
@@ -622,7 +620,12 @@ int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
                 aux = *r;
                 *r = NULL;
                 free(aux);
-            } else if (so_um_filho(*r))
+            } else if (Arv_Disciplina *end_filho = so_um_filho(*r))
+            {
+                aux = *r;
+                *r = end_filho;
+                free(aux);
+            } else
             {
                 end_menor_filho = menor_filho_esquerda_disciplina((*r)->dir);
                 (*r)->codigo_disciplina = end_menor_filho->codigo_disciplina;
@@ -632,9 +635,11 @@ int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
     }
 }
 
-void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc){
+void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc)
+{
     int enc = 0;
-    if(r != NULL){
+    if(r != NULL)
+    {
         buscar_matricula(r->mat, cod_disc, &enc);
         if(enc != 0)
             *validar_disc = 1;
@@ -659,3 +664,51 @@ int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, i
         }
     }
 }
+
+
+// Mostrar o histórico de um determinado aluno, contendo o nome do curso, as disciplinas e sua respectiva
+// nota organizadas pelo período que a disciplina está cadastrada no curso. 
+void buscar_aluno(Alunos *aluno, int matricula, Arv_Cursos *r)
+{
+    if (aluno != NULL)
+    {
+        if (aluno->matricula == matricula)
+        {
+            printf("Aluno: %s", aluno->nome);
+            buscar_curso(aluno, r);
+        }
+        else
+        {
+            buscar_aluno(aluno->prox, matricula, r);
+        }
+    }
+}
+
+void buscar_curso(Alunos *aluno, Arv_Cursos *r)
+{
+    if (r != NULL)
+    {
+        if (r->codigo_curso == aluno->codigo_curso)
+        {
+            printf("Curso: %s\n", r->nome_curso);
+            exibir_historico(aluno, r);
+        }
+        else if (aluno->codigo_curso < r->codigo_curso)
+            buscar_curso(aluno, r->esq);
+        else
+            buscar_curso(aluno, r->dir);
+    }
+}
+''
+void exibir_historico(Alunos *aluno, Arv_Cursos *r)
+{
+    printf("Disciplinas e notas: \n");
+    for (int i = 0; i < r->quantidade_periodos; i++)
+    {
+        printf("%d° Período\n", i + 1);
+        exibir_disciplina_periodo(r, aluno->codigo_curso, i + 1);
+        exibir_notas_periodo(aluno->notas, i + 1);
+    }
+}
+
+

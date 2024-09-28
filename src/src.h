@@ -19,7 +19,7 @@ Daniel: I, V, VII, IX, XI, XIII, XV
 
 FEITOS:
 CRISTINA: I
-DANIEL: II, III, V, VII, IX e XI
+DANIEL: II, III, V, VII, IX e XI, XIII, 
 
 */
 
@@ -106,5 +106,11 @@ void exibir_notadisciplina(Alunos *alunos, int matricula, int codigo_disciplina)
 void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int periodo);
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo);
 void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo);
+
+int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, int codigo_disc);
+void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc);
+int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina);
+
+
 
 #endif 
