@@ -3,7 +3,6 @@
 #include <string.h>
 #include "src/src.h"
 
-
 void tela_inicial()
 {
     printf("|                      ---------                      |\n");
@@ -19,7 +18,6 @@ void tela_inicial()
     printf("|      6. -> Sair                                     |\n");
     printf("|                                                     |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 void tela_disciplinas()
@@ -36,7 +34,6 @@ void tela_disciplinas()
     printf("|     6. Mostrar Disciplinas por aluno Matriculado    |\n");
     printf("|     7. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 void tela_curso()
@@ -50,7 +47,6 @@ void tela_curso()
     printf("|     3. Mostrar todos os cursos                      |\n");
     printf("|     4. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 void tela_notas()
@@ -67,7 +63,6 @@ void tela_notas()
     printf("|     6. Exibir Notas                                 |\n");
     printf("|     7. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 void tela_matriculas()
@@ -83,7 +78,6 @@ void tela_matriculas()
     printf("|     5. Exibir Matricula                             |\n");
     printf("|     6. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 void tela_alunos()
@@ -99,145 +93,226 @@ void tela_alunos()
     printf("|     5. Exibir Aluno                                 |\n");
     printf("|     6. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
-
 }
 
 int main()
 {
-    // Variáveis necessárias para o main
     int menu_inicial, menu_caso1, menu_caso2, menu_caso3, menu_caso4, menu_caso5;
 
-    tela_inicial();
+    Alunos *aluno;
+    Arv_Cursos *curso;
+    Arv_Disciplina *disciplina;
+    Arv_Notas *nota;
+    Arv_Matricula *matricula;
 
-    printf("Escolha a opção desejada: ");
-    scanf("%d", &menu_inicial);
-
-    switch (menu_inicial)
+    curso = NULL;
+    disciplina = NULL;
+    nota = NULL;
+    matricula = NULL;
+    do
     {
-    case 1:
-        tela_disciplinas();
-        printf("Escolha a opção desejada: ");
-        scanf("%d", &menu_caso1);
+        tela_inicial();
 
-        switch (menu_caso1)
+        printf("Escolha a opção desejada: ");
+        scanf("%d", &menu_inicial);
+
+        switch (menu_inicial)
         {
-        case 1:
+        case 1: // Gerenciar Disciplinas
+            do
+            {
+                tela_disciplinas();
+                printf("Escolha a opção desejada: ");
+                scanf("%d", &menu_caso1);
+                switch (menu_caso1)
+                {
+                case 1: // Cadastrar Disciplina
+                {
+                    int codigo_curso, codigo_disciplina, periodo, ch;
+                    char nome_disciplina[100];
+                    printf("Informe o código do curso: ");
+                    scanf("%d", &codigo_curso);
+                    printf("Informe o código da disciplina: ");
+                    scanf("%d", &codigo_disciplina);
+                    printf("Informe o nome da disciplina: ");
+                    scanf("%s", nome_disciplina);
+                    printf("Informe o período: ");
+                    scanf("%d", &periodo);
+                    printf("Informe a carga horária: ");
+                    scanf("%d", &ch);
+                    cadastrar_disciplina(curso, codigo_curso, codigo_disciplina, nome_disciplina, periodo, ch);
+                }
+                break;
+                case 2: // Remover Disciplina
+                {
+                    int codigo_curso, codigo_disciplina;
+                    printf("Informe o código do curso: ");
+                    scanf("%d", &codigo_curso);
+                    printf("Informe o código da disciplina a remover: ");
+                    scanf("%d", &codigo_disciplina);
+                    remover_disciplina_curso(&curso, aluno, codigo_curso, codigo_disciplina);
+                }
+                break;
+                case 3:
+                    exibir_disciplinasporcurso(curso, 0);
+                    break;
+                case 4:
+                    break;
+                
+                case 5:
+                    break;
+                
+                case 6:
+                    break;
+                case 7:
+                    break;
+                default:
+                    printf("Opção inválida.\n");
+                    break;
+                }
+            } while (menu_caso1 != 7);
             break;
+
         case 2:
+            do
+            {
+                tela_curso();
+                printf("Escolha a opção desejada: ");
+                scanf("%d", &menu_caso2);
+                switch (menu_caso2)
+                {
+                case 1:
+                {
+                    int codigo_curso, quantidade_periodos;
+                    char nome_curso[100];
+                    printf("Informe o código do curso: ");
+                    scanf("%d", &codigo_curso);
+                    printf("Informe o nome do curso: ");
+                    scanf("%s", nome_curso);
+                    printf("Informe a quantidade de períodos: ");
+                    scanf("%d", &quantidade_periodos);
+                    cadastrar_curso(&curso, codigo_curso, nome_curso, quantidade_periodos);
+                }
+                break;
+                case 2:
+                    // Essa função ainda não existe
+                    break;
+                case 3:
+                    exibir_curso(curso);
+                    break;
+                case 4:
+                    break;
+                default:
+                    printf("Opção inválida.\n");
+                    break;
+                }
+            } while (menu_caso2 != 4);
             break;
+
         case 3:
-            break;
+            tela_alunos();
+            printf("Escolha a opção desejada: ");
+            scanf("%d", &menu_caso3);
+
+            int matricula, codigo_curso;
+            char nome[40];
+
+            switch (menu_caso3)
+            {
+            case 1:
+            {
+                printf("Informe o nome do aluno: ");
+                scanf("%s", nome);
+                printf("Informe a matricula: ");
+                scanf("%d", &matricula);
+                printf("Informe o código do curso: ");
+                scanf("%d", &codigo_curso);
+                cadastrar_aluno(&aluno, curso, matricula, nome, codigo_curso);
+            }
+                break;
+            case 2:
+                // Essa função não existe
+                break;
+            case 3:
+                printf("Digite o código do curso: ");
+                scanf("%d", &codigo_curso);
+
+                exibir_alunosporcurso(curso, codigo_curso);
+                break;
+            case 4:
+                // Em breve
+                break;
+            case 5:
+                // Em breve
+                break;
+            case 6:
+                break;
+
+            default:
+                break;
+            }
+        break;
         case 4:
+            tela_matriculas();
+            printf("Escolha a opção desejada: ");
+            scanf("%d", &menu_caso4);
+
+            switch (menu_caso4)
+            {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+
+            default:
+                break;
+            }
             break;
+
         case 5:
+            tela_notas();
+            printf("Escolha a opção desejada: ");
+            scanf("%d", &menu_caso5);
+
+            switch (menu_caso1)
+            {
+            case 1:
+                
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+
+            default:
+                break;
+            }
             break;
+
         case 6:
+            printf("Saindo...\n");
             break;
-        case 7:
-            break;
-        
+
         default:
+            printf("Opção inválida\n");
             break;
         }
 
-        break;
-    case 2:
-        tela_curso();
-        printf("Escolha a opção desejada: ");
-        scanf("%d", &menu_caso2);
-        switch (menu_caso1)
-        {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        default:
-            break;
-        }
-        break;
-    case 3:
-        tela_alunos();
-        printf("Escolha a opção desejada: ");
-        scanf("%d", &menu_caso3);
-        switch (menu_caso1)
-        {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        
-        default:
-            break;
-        }
-    case 4:
-        tela_matriculas();
-        printf("Escolha a opção desejada: ");
-        scanf("%d", &menu_caso4);
+    } while (menu_inicial != 6);
 
-        switch (menu_caso4)
-        {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        
-        default:
-            break;
-        }
-        break;
-    
-    case 5:
-        tela_notas();
-        printf("Escolha a opção desejada: ");
-        scanf("%d", &menu_caso5);
-
-        switch (menu_caso1)
-        {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-        
-        default:
-            break;
-        }
-        break;
-    
-    case 6:
-        printf("Saindo...\n");
-        break;
-    
-    default:
-        printf("Opção inválida\n");
-        break;
-    }
     return 0;
 }

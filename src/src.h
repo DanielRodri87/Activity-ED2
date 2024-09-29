@@ -1,27 +1,5 @@
 #ifndef SRC_H
 #define SRC_H
-/*
-
-lista alunos: mat, nome, codigo_curso, arv notas, arv matriculas, 
-
-Arvore curso: código_curso, nome_curso, quantidade_periodos, arv_disciplinas
-
-Arvore disciplinas: codigo_disciplina, nome_disciplina, periodo, ch
-
-Arvore de notas: codigo_disciplina, semestre, nota_final
-
-Arvore de Matricula: codigo_disciplina
-
-
-AFAZERES:
-Cristina: II, III, IV, VI, VIII, X, XII, XIV
-Daniel: I, V, VII, IX, XI, XIII, XV
-
-FEITOS:
-CRISTINA: I
-DANIEL: II, III, V, VII, IX e XI, XIII, XV
-
-*/
 
 typedef struct arv_disciplina
 {
