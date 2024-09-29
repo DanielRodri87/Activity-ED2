@@ -260,6 +260,7 @@ void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
 }
 
 // função para exibição de todos os alunos de um determinado curso
+// ---------------------- NÃO RETORNA NADA --------------------
 void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
     if(curso != NULL){
         if(curso->codigo_curso == codigo_curso){
@@ -276,6 +277,8 @@ void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
 }
 
 // função para exibição de todas as disciplinas de um determinado curso (as duas funções se complementam)
+
+//  ---------------- NÃO RETORNA NADA ---------------------
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso){
     if (curso != NULL){
         if(curso->codigo_curso == codigo_curso){
@@ -411,7 +414,8 @@ void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
 
 }
 
-void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria){
+void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria)
+{
 
     int curso_encontrado = 0;
     int periodo_valido = 0;
