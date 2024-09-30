@@ -269,16 +269,27 @@ void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat)
     }
 }
 
-// função para exibição de todos os alunos de um determinado curso
-// ---------------------- NÃO RETORNA NADA --------------------
+
+
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// VI -  Mostrar todos os alunos de um determinado curso. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+
+void exibir_alunos_recursivamente(Alunos *aluno){
+    if(aluno != NULL){
+        printf("Nome: %s\n", aluno->nome);
+        printf("Matricula: %d\n", aluno->matricula);
+        exibir_alunos_recursivamente(aluno->prox); 
+    }
+}
+
 void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
     if(curso != NULL){
-        if(curso->codigo_curso == codigo_curso){
-            Alunos *aluno_atual = curso->alunos;
-            while(aluno_atual != NULL){
-                printf("Nome: %s\nMatricula: %d\n", aluno_atual->nome, aluno_atual->matricula);
-                aluno_atual = aluno_atual->prox;
-            }
+        if (curso->codigo_curso == codigo_curso) {
+            printf("Alunos do curso: %s (Código: %d)\n", curso->nome_curso, curso->codigo_curso);
+            printf("-----------------------------------\n");
+
+            exibir_alunos_recursivamente(curso->alunos);
         }
 
         exibir_alunosporcurso(curso->esq, codigo_curso);
@@ -286,29 +297,36 @@ void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso){
     }
 }
 
-// função para exibição de todas as disciplinas de um determinado curso (as duas funções se complementam)
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// IX -  Mostrar todas as disciplinas de um determinado período de um curso. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-//  ---------------- NÃO RETORNA NADA ---------------------
+void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina){
+    if(disciplina != NULL){
+
+        printf("Codigo: %d\n", disciplina->codigo_disciplina);
+        printf("Nome: %s\n", disciplina->nome_disciplina);
+        printf("Periodo: %d\n", disciplina->periodo);
+        printf("Carga Horaria: %d\n", disciplina->carga_horaria);
+        printf("-------------------------------\n");
+    
+        exibir_disciplinasporcurso_recursivamente(disciplina->esq);
+        exibir_disciplinasporcurso_recursivamente(disciplina->dir);
+    }
+}
+
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso){
-    if (curso != NULL){
+    if(curso != NULL){
         if(curso->codigo_curso == codigo_curso){
             Arv_Disciplina *disciplina_atual = curso->disciplina;
-
+            printf("Disciplinas do curso %s:\n", curso->nome_curso);
+            printf("-------------------------------\n");
+            
             exibir_disciplinasporcurso_recursivamente(disciplina_atual);
         }
 
         exibir_disciplinasporcurso(curso->esq, codigo_curso);
         exibir_disciplinasporcurso(curso->dir, codigo_curso);
-    }
-
-}
-
-void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina){
-    if(disciplina != NULL){
-        printf("Codigo: %d - Periodo: %d - Nome: %s", disciplina->codigo_disciplina, disciplina->periodo, disciplina->nome_disciplina);
-
-        exibir_disciplinasporcurso_recursivamente(disciplina->esq);
-        exibir_disciplinasporcurso_recursivamente(disciplina->dir);
     }
 }
 
@@ -423,6 +441,13 @@ void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
     }
 
 }
+
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// III -  Cadastrar disciplinas a qualquer momento em uma árvore de disciplinas de um determinado curso, ou 
+// seja, um disciplina só pode ser cadastrada se o curso já estiver sido cadastrado, além disso, o período da 
+// disciplina deve ser válido, ou seja, estar entre 1 e a quantidade máxima de períodos do curso. A carga 
+// horária da disciplina deve ser múltiplo de 15, variando entre 30 e 90. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
 void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria)
 {
