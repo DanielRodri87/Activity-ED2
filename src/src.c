@@ -77,6 +77,16 @@ int cadastrar_matricula(Arv_Matricula **r, int matricula)
     return (insere); 
 }
 
+void exibir_matriculas(Arv_Matricula *r)
+{
+    if (r != NULL)
+    {
+        printf("Matricula: %d\n", r->codigo_disciplina);
+        exibir_matriculas(r->esq);
+        exibir_matriculas(r->dir);
+    }
+}
+
 void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado)
 {
     if (r != NULL)
@@ -565,6 +575,22 @@ void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int per
         exibir_notas_periodo(notas->dir, disciplinas, periodo);
     }
 }
+
+void exibir_alunos(Alunos *lista)
+{
+    Alunos *atual = lista;
+
+    while (atual != NULL)
+    {
+        printf("Matricula: %d\n", atual->matricula);
+        printf("Nome: %s\n", atual->nome);
+        printf("Codigo do curso: %d\n", atual->codigo_curso);
+
+        printf("\n");
+        atual = atual->prox;
+    }
+}
+
 
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo)
 {

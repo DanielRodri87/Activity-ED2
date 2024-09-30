@@ -75,7 +75,7 @@ void tela_matriculas()
     printf("|     2. Remover Matricula                            |\n");
     printf("|     3. Mostrar Disciplinas aluno matriculado        |\n");
     printf("|     4. Desmatricular Aluno                          |\n");
-    printf("|     5. Exibir Matricula                             |\n");
+    printf("|     5. Exibir Matriculas                            |\n");
     printf("|     6. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
 }
@@ -100,15 +100,15 @@ int main()
     int menu_inicial, menu_caso1, menu_caso2, menu_caso3, menu_caso4, menu_caso5;
 
     Alunos *aluno;
-    Arv_Cursos *curso;
-    Arv_Disciplina *disciplina;
-    Arv_Notas *nota;
-    Arv_Matricula *matricula;
+    Arv_Cursos *arv_curso;
+    Arv_Disciplina *arv_disciplina;
+    Arv_Notas *arv_nota;
+    Arv_Matricula *arv_matricula;
 
-    curso = NULL;
-    disciplina = NULL;
-    nota = NULL;
-    matricula = NULL;
+    arv_curso = NULL;
+    arv_disciplina = NULL;
+    arv_nota = NULL;
+    arv_matricula = NULL;
     do
     {
         tela_inicial();
@@ -140,7 +140,7 @@ int main()
                     scanf("%d", &periodo);
                     printf("Informe a carga horária: ");
                     scanf("%d", &ch);
-                    cadastrar_disciplina(curso, codigo_curso, codigo_disciplina, nome_disciplina, periodo, ch);
+                    cadastrar_disciplina(arv_curso, codigo_curso, codigo_disciplina, nome_disciplina, periodo, ch);
                 }
                 break;
                 case 2: // Remover Disciplina
@@ -150,18 +150,18 @@ int main()
                     scanf("%d", &codigo_curso);
                     printf("Informe o código da disciplina a remover: ");
                     scanf("%d", &codigo_disciplina);
-                    remover_disciplina_curso(&curso, aluno, codigo_curso, codigo_disciplina);
+                    remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
                 }
                 break;
                 case 3:
-                    exibir_disciplinasporcurso(curso, 0);
+                    exibir_disciplinasporcurso(arv_curso, 0);
                     break;
                 case 4:
                     break;
-                
+
                 case 5:
                     break;
-                
+
                 case 6:
                     break;
                 case 7:
@@ -171,7 +171,7 @@ int main()
                     break;
                 }
             } while (menu_caso1 != 7);
-            break;
+        break;
 
         case 2:
             do
@@ -191,14 +191,14 @@ int main()
                     scanf("%s", nome_curso);
                     printf("Informe a quantidade de períodos: ");
                     scanf("%d", &quantidade_periodos);
-                    cadastrar_curso(&curso, codigo_curso, nome_curso, quantidade_periodos);
+                    cadastrar_curso(&arv_curso, codigo_curso, nome_curso, quantidade_periodos);
                 }
                 break;
                 case 2:
                     // Essa função ainda não existe
                     break;
                 case 3:
-                    exibir_curso(curso);
+                    exibir_curso(arv_curso);
                     break;
                 case 4:
                     break;
@@ -227,9 +227,9 @@ int main()
                 scanf("%d", &matricula);
                 printf("Informe o código do curso: ");
                 scanf("%d", &codigo_curso);
-                cadastrar_aluno(&aluno, curso, matricula, nome, codigo_curso);
+                cadastrar_aluno(&aluno, arv_curso, matricula, nome, codigo_curso);
             }
-                break;
+            break;
             case 2:
                 // Essa função não existe
                 break;
@@ -237,21 +237,22 @@ int main()
                 printf("Digite o código do curso: ");
                 scanf("%d", &codigo_curso);
 
-                exibir_alunosporcurso(curso, codigo_curso);
+                exibir_alunosporcurso(arv_curso, codigo_curso);
                 break;
             case 4:
-                // Em breve
+                // em breve
                 break;
             case 5:
-                // Em breve
+                exibir_alunos(aluno);
                 break;
             case 6:
+                printf("Saindo...\n");
                 break;
 
             default:
                 break;
             }
-        break;
+            break;
         case 4:
             tela_matriculas();
             printf("Escolha a opção desejada: ");
@@ -260,6 +261,16 @@ int main()
             switch (menu_caso4)
             {
             case 1:
+                int entrada_mat, saida;
+                // int cadastrar_matricula(Arv_Matricula **r, int matricula)
+                printf("Digite a matrícula que voce deseja cadastrar: ");
+                scanf("%d", &entrada_mat);
+
+                saida = cadastrar_matricula(&arv_matricula, entrada_mat);
+                if (saida)
+                    printf("Matricula realizada com sucesso\n");
+                else
+                    printf("Matricula nao realizada\n");
                 break;
             case 2:
                 break;
@@ -268,6 +279,7 @@ int main()
             case 4:
                 break;
             case 5:
+                exibir_matriculas(arv_matricula);
                 break;
             case 6:
                 break;
@@ -285,7 +297,7 @@ int main()
             switch (menu_caso1)
             {
             case 1:
-                
+
                 break;
             case 2:
                 break;

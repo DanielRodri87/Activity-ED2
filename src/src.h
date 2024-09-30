@@ -92,5 +92,7 @@ void exibir_historico(Alunos *aluno, Arv_Cursos *r);
 void buscar_curso_aluno(Alunos *aluno, Arv_Cursos *r);
 void buscar_aluno_xv(Alunos *aluno, int matricula, Arv_Cursos *r);
 
+void exibir_alunos(Alunos *lista);
+void exibir_matriculas(Arv_Matricula *r);
 
 #endif 
