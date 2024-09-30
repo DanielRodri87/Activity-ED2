@@ -2,32 +2,51 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, char nome[], int codigo_curso){
-    Arv_Cursos *curso_encontrado = NULL;
-
-    while(raiz != NULL && curso_encontrado == NULL){
-        if(raiz->codigo_curso == codigo_curso){
-            curso_encontrado = raiz;  
-        }else if(codigo_curso < raiz->codigo_curso){
-            raiz = raiz->esq; 
-        }else{
-            raiz = raiz->dir; 
-        }
-    }
-    
-    if(curso_encontrado != NULL){
-        Alunos *novo_aluno = (Alunos*) malloc(sizeof(Alunos));
-        novo_aluno->matricula = matricula;
-        strcpy(novo_aluno->nome, nome); 
-        novo_aluno->codigo_curso = codigo_curso;
-        novo_aluno->notas = NULL;
-        novo_aluno->mat = NULL;
-
-        novo_aluno->prox = *lista_alunos;  
-        *lista_alunos = novo_aluno;
+#include <ctype.h>
+void converternome(char *nome)
+{
+    int i = 0;
+    while (nome[i] != '\0')
+    {
+        nome[i] = toupper(nome[i]);
+        i++;
     }
 }
+
+
+void cadastrar_aluno(Alunos **aluno, int matricula, char *nome, int codigo_curso)
+{
+    Alunos *novo = (Alunos*) malloc(sizeof(Alunos));
+    novo->prox = NULL;
+    novo->matricula = matricula;
+    char *aux_nome = strdup(nome);
+    converternome(aux_nome);
+    strcpy(novo->nome, aux_nome);
+    novo->codigo_curso = codigo_curso;
+    novo->notas = NULL;
+    novo->mat = NULL;
+
+    if (*aluno == NULL) 
+        *aluno = novo;
+    else
+    {
+        if (strcmp(aux_nome, (*aluno)->nome) < 0)
+        {
+            novo->prox = *aluno;
+            *aluno = novo;
+        }
+        else
+        {
+            Alunos *aux = *aluno;
+            while (aux->prox != NULL && strcmp(aux_nome, aux->prox->nome) > 0)
+                aux = aux->prox;
+
+            novo->prox = aux->prox;
+            aux->prox = novo;
+        }
+    }
+}
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // II - Cadastrar cursos a qualquer momento na árvore de curso, de forma que o usuário não precise cadastrar
@@ -75,6 +94,16 @@ int cadastrar_matricula(Arv_Matricula **r, int matricula)
     else if (matricula > (*r)->codigo_disciplina)
         insere = cadastrar_matricula(&((*r)->dir), matricula);
     return (insere); 
+}
+
+void exibir_matriculas(Arv_Matricula *r)
+{
+    if (r != NULL)
+    {
+        printf("Matricula: %d\n", r->codigo_disciplina);
+        exibir_matriculas(r->esq);
+        exibir_matriculas(r->dir);
+    }
 }
 
 void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado)
@@ -590,6 +619,22 @@ void exibir_notas_periodo(Arv_Notas *notas, Arv_Disciplina *disciplinas, int per
         exibir_notas_periodo(notas->dir, disciplinas, periodo);
     }
 }
+
+void exibir_alunos(Alunos *lista)
+{
+    Alunos *atual = lista;
+
+    while (atual != NULL)
+    {
+        printf("Matricula: %d\n", atual->matricula);
+        printf("Nome: %s\n", atual->nome);
+        printf("Codigo do curso: %d\n", atual->codigo_curso);
+
+        printf("\n");
+        atual = atual->prox;
+    }
+}
+
 
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo)
 {
