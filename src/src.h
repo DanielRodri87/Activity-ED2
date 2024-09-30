@@ -55,7 +55,7 @@ typedef struct arv_cursos
     Alunos *alunos; 
 } Arv_Cursos;
 
-void cadastrar_aluno(Alunos **lista_alunos, Arv_Cursos *raiz, int matricula, char nome[], int codigo_curso);
+void cadastrar_aluno(Alunos **aluno, int matricula, char *nome, int codigo_curso);
 void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
 int cadastrar_matricula(Arv_Matricula **r, int matricula);
 
