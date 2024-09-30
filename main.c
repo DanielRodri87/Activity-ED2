@@ -171,7 +171,7 @@ int main()
                     break;
                 }
             } while (menu_caso1 != 7);
-            break;
+        break;
 
         case 2:
             do
