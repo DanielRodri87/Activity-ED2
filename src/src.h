@@ -77,6 +77,12 @@ void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
+void localizar_no(Arv_Matricula **atual, Arv_Matricula **pai, int codigo_disciplina, int *encontrado);
+void remover_no(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
+void remover_no_folha(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
+void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
+void remover_no_com_dois_filhos(Arv_Matricula *atual);
+
 void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
 void exibir_notadisciplina(Alunos *alunos, Arv_Cursos *raiz_cursos, int matricula, int codigo_disciplina);
 
