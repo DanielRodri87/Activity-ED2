@@ -13,6 +13,10 @@ void converternome(char *nome)
     }
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// I - Cadastrar alunos a qualquer momento na lista, de forma que só possa cadastrar um código de curso que 
+// já tenha sido cadastrado na árvore de cursos. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
 void cadastrar_aluno(Alunos **aluno, int matricula, char *nome, int codigo_curso)
 {
@@ -349,7 +353,9 @@ void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso){
     }
 }
 
-// função para exibição de todas as disciplinas que um determinado aluno está matriculado (as duas funções se complementam)
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// X - Mostrar todas as disciplinas que um determinado aluno está matriculado  
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
 void exibir_disciplinas_por_aluno_recursivo(Arv_Disciplina *disciplina_atual)
 {
@@ -385,81 +391,92 @@ void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno)
 }
 
 
-// função para permitir a remoção de uma disciplina da árvore de matrícula de um determinado aluno.
-void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina){
-    if(*raiz != NULL){
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// XIV - Permita remover uma disciplina da árvore de matrícula de um determinado aluno. 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+
+void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina) {
+    if (*raiz != NULL) {
         Arv_Matricula *atual = *raiz;
         Arv_Matricula *pai = NULL;
         int encontrado = 0;
 
-        while (atual != NULL){
-            if(atual->codigo_disciplina == codigo_disciplina){
-                encontrado = 1;
-                break;
-            }
+        localizar_no(&atual, &pai, codigo_disciplina, &encontrado);
 
-            pai = atual;
-            if(codigo_disciplina < atual->codigo_disciplina){
-                atual = atual->esq;
-            }else{
-                atual = atual->dir;
+        if (encontrado) {
+            remover_no(raiz, pai, atual);
+        }
+    }
+}
+
+void localizar_no(Arv_Matricula **atual, Arv_Matricula **pai, int codigo_disciplina, int *encontrado) {
+    while (*atual != NULL && *encontrado == 0) {
+        if ((*atual)->codigo_disciplina == codigo_disciplina) {
+            *encontrado = 1;
+        } else {
+            *pai = *atual;
+
+            if (codigo_disciplina < (*atual)->codigo_disciplina) {
+                *atual = (*atual)->esq;
+            } else {
+                *atual = (*atual)->dir;
             }
         }
+    }
+}
 
-        if(encontrado){
-            if(atual->esq == NULL && atual->dir == NULL){
-                if(pai == NULL){
-                    *raiz = NULL;
-                }else if(pai->esq == atual){
-                    pai->esq = NULL;
-                }else{
-                    pai->dir = NULL;
-                }
-            }
-
-            else if(atual->esq == NULL){
-                if(pai == NULL){
-                    *raiz = atual->dir;
-                }else if(pai->esq == atual){
-                    pai->esq = atual->dir;
-                }else{
-                    pai->dir = atual->dir;
-                }
-            }else if(atual->dir == NULL){
-                if(pai == NULL){
-                    *raiz = atual->esq;
-                }else if(pai->esq == atual){
-                    pai->esq = atual->esq;
-                }else{
-                    pai->dir = atual->esq;
-                }
-            }
-
-            else{
-
-                Arv_Matricula *menor_no = atual->dir;
-                Arv_Matricula *menor_nopai = atual;
-
-                while(menor_no->esq != NULL){
-                    menor_nopai = menor_no;
-                    menor_no = menor_no->esq;
-                }
-
-                atual->codigo_disciplina = menor_no->codigo_disciplina;
-
-                if(menor_nopai->esq == menor_no){
-                    menor_nopai->esq = menor_no->dir;
-                }else{
-                    menor_nopai->dir = menor_no->dir;
-                }
-            }
-
-            free(atual);
-        }
-
+void remover_no(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual) {
+    if (atual->esq == NULL && atual->dir == NULL) {
+        remover_no_folha(raiz, pai, atual);
+    } else if (atual->esq == NULL || atual->dir == NULL) {
+        remover_no_com_um_filho(raiz, pai, atual);
+    } else {
+        remover_no_com_dois_filhos(atual);
     }
 
+    free(atual);
 }
+
+void remover_no_folha(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual) {
+    if (pai == NULL) {
+        *raiz = NULL;
+    } else if (pai->esq == atual) {
+        pai->esq = NULL;
+    } else {
+        pai->dir = NULL;
+    }
+}
+
+void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual) {
+    Arv_Matricula *filho = (atual->esq != NULL) ? atual->esq : atual->dir;
+
+    if (pai == NULL) {
+        *raiz = filho;
+    } else if (pai->esq == atual) {
+        pai->esq = filho;
+    } else {
+        pai->dir = filho;
+    }
+}
+
+void remover_no_com_dois_filhos(Arv_Matricula *atual) {
+    Arv_Matricula *menor_no = atual->dir;
+    Arv_Matricula *menor_nopai = atual;
+
+    while (menor_no->esq != NULL) {
+        menor_nopai = menor_no;
+        menor_no = menor_no->esq;
+    }
+
+    atual->codigo_disciplina = menor_no->codigo_disciplina;
+
+    if (menor_nopai->esq == menor_no) {
+        menor_nopai->esq = menor_no->dir;
+    } else {
+        menor_nopai->dir = menor_no->dir;
+    }
+}
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // III -  Cadastrar disciplinas a qualquer momento em uma árvore de disciplinas de um determinado curso, ou 
