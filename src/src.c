@@ -747,40 +747,43 @@ void exibir_informacoes(Arv_Disciplina *disciplina_atual, Arv_Notas *nota_atual)
     printf("Carga Horaria: %dh\n", disciplina_atual->carga_horaria);
     printf("Nota final: %.2f\n", nota_atual->nota_final);
 }
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// xii) Mostrar a nota de uma disciplina de um determinado aluno, mostrando o período e a carga horária da disciplina
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-void exibir_nota_aluno_disciplina(Arv_Cursos *curso, int codigo_curso, int matricula, int codigo_disciplina)
+void exibir_nota_aluno_disciplina(Alunos *a, Arv_Cursos *curso, int matricula, int codigo_disciplina)
 {
-    if (curso != NULL)
+    if(a != NULL)
     {
-        if (curso->codigo_curso == codigo_curso)
+        if(a->matricula == matricula)
         {
-            Alunos *aluno = buscar_aluno_por_matricula_no_curso(curso, codigo_curso, matricula);
-            if (aluno == NULL)
-                printf("Aluno não encontrado no curso.\n");
-
-            Arv_Notas *nota = aluno->notas;
-            while (nota != NULL)
+            Arv_Notas *nota = a->notas;
+            while(nota != NULL)
             {
-                if (nota->codigo_disciplina == codigo_disciplina)
+                if(nota->codigo_disciplina == codigo_disciplina)
                 {
-                    printf("Aluno: %s\n", aluno->nome);
-                    printf("Matrícula: %d\n", aluno->matricula);
-                    printf("Disciplina: %d\n", codigo_disciplina);
-                    printf("Nota Final: %.2f (Semestre: %.1f)\n", nota->nota_final, nota->semestre);
+                    Arv_Disciplina *d = curso->disciplina;
+                    while(d != NULL){
+                        if(d->codigo_disciplina == codigo_disciplina)
+                            printf("Aluno: %s\nDisciplina: %d\nPeriodo: %d\nCH: %d\nNota Final: %.2f\n", 
+                            a->nome, nota->codigo_disciplina, d->periodo, d->carga_horaria, nota->nota_final);
+                        if(codigo_disciplina < d->codigo_disciplina)
+                            d = d->esq;
+                        else
+                            d = d->dir;
+                    }
                 }
-                if (nota->esq != NULL)
+                if(codigo_disciplina < nota->codigo_disciplina)
                     nota = nota->esq;
                 else
                     nota = nota->dir;
             }
-
-            printf("Nota não encontrada para a disciplina especificada.\n");
         }
-
-        exibir_nota_aluno_disciplina(curso->esq, codigo_curso, matricula, codigo_disciplina);
-        exibir_nota_aluno_disciplina(curso->dir, codigo_curso, matricula, codigo_disciplina);
+        else
+            exibir_nota_aluno_disciplina(a->prox, curso, matricula, codigo_disciplina);
     }
 }
+
 
 // void exibir_notas_periodo(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo)
 // {

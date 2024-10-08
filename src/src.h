@@ -85,7 +85,7 @@ void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matri
 void remover_no_com_dois_filhos(Arv_Matricula *atual);
 
 int cadastrar_disciplina(Arv_Cursos **curso, Arv_Disciplina *No, int idcurso);
-void exibir_nota_aluno_disciplina(Arv_Cursos *curso, int codigo_curso, int matricula, int codigo_disciplina);
+void exibir_nota_aluno_disciplina(Alunos *a, Arv_Cursos *curso, int matricula, int codigo_disciplina);
 
 void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula);
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo);

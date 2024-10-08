@@ -186,7 +186,6 @@ int main()
         case 11:
             printf("Digite matricula: ");
             scanf("%d", &matricula);
-
             printf("Digite o período: ");
             scanf("%f", &periodo);
 
@@ -194,14 +193,12 @@ int main()
             break;
 
         case 12:
-            printf("Digite o código do curso: ");
-            scanf("%d", &codigo_curso);
             printf("Digite a matrícula do aluno: ");
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
 
-            exibir_nota_aluno_disciplina(arv_curso, codigo_curso, matricula, codigo_disciplina);
+            exibir_nota_aluno_disciplina(aluno, arv_curso, matricula, codigo_disciplina);
             break;
         case 13:
             // Remover Disciplina de Curso
