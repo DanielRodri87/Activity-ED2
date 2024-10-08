@@ -137,10 +137,10 @@ int main()
             scanf("%d", &codigo_disciplina);
 
             printf("Digite o semestre (número inteiro): ");
-            scanf("%d", &quantidade_periodos); 
+            scanf("%d", &quantidade_periodos);
 
             printf("Digite a nota final: ");
-            scanf("%f", &periodo); 
+            scanf("%f", &periodo);
 
             // Tentar cadastrar a nota
             saida = cadastrar_nota(&aluno, matricula, codigo_disciplina, quantidade_periodos, periodo);
@@ -204,16 +204,51 @@ int main()
             // Remover Disciplina de Curso
             printf("Digite o código do curso: ");
             scanf("%d", &codigo_curso);
+
             printf("Digite o código da disciplina que deseja remover: ");
             scanf("%d", &codigo_disciplina);
-            remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
+
+            Arv_Cursos *curso_encontrado_xiii = buscar_curso(arv_curso, codigo_curso);
+            if (curso_encontrado_xiii == NULL)
+            {
+                printf("Erro: Curso não encontrado.\n");
+                break;
+            }
+
+            int alunos_matriculados = verificar_matriculas_alunos(curso_encontrado->alunos, codigo_disciplina);
+
+            if (alunos_matriculados)
+                printf("Erro: Não é possível remover a disciplina. Há alunos matriculados nela.\n");
+
+            else
+            {
+                int removido = remover_disciplina_curso(&(curso_encontrado->disciplina), codigo_disciplina);
+                if (removido)
+                    printf("Disciplina removida com sucesso.\n");
+                else
+                    printf("Erro: Disciplina não encontrada no curso.\n");
+            }
             break;
         case 14:
-            // Remover Disciplina da Matrícula
-            printf("Digite o código da disciplina que deseja remover: ");
-            scanf("%d", &codigo_disciplina);
-            remover_disciplinaaluno(&arv_matricula, codigo_disciplina);
+            printf("Digite a matrícula do aluno: ");
+            scanf("%d", &matricula);
+
+            Alunos *aluno_encontrado = buscar_aluno(aluno, matricula);
+
+            if (aluno_encontrado == NULL)
+            {
+                printf("Erro: Aluno não encontrado.\n");
+            }
+            else
+            {
+                printf("Digite o código da disciplina que deseja remover: ");
+                scanf("%d", &codigo_disciplina);
+
+                remover_matricula(&aluno_encontrado->mat, codigo_disciplina);
+                printf("Disciplina removida da matrícula do aluno.\n");
+            }
             break;
+
         case 15:
             // Mostrar Histórico do Aluno
             printf("Digite a matrícula do aluno: ");
