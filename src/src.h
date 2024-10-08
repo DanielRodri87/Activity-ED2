@@ -55,7 +55,10 @@ typedef struct arv_cursos
     Alunos *alunos; 
 } Arv_Cursos;
 
-void cadastrar_aluno(Arv_Cursos *arv_cursos, int matricula, char *nome, int codigo_curso);
+void gerar_codigo_disc(int ch, int periodo, int *coddisc);
+Arv_Cursos* buscar_curso(Arv_Cursos *curso, int codigo_curso);
+
+void cadastrar_aluno(Alunos **a, int mat, char *nome, int codigo_curso);
 void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
 void cadastrar_matricula(Alunos **a, int codigo, int mat);
 
@@ -67,11 +70,11 @@ void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
 int notas_disciplina_periodo(Arv_Notas *n, int periodo);
 
 void notas_discplina_periodo_aluno(Alunos *r, int periodo, int mat);
-void exibir_alunosporcurso(Arv_Cursos *curso, int codigo_curso);
+void alunosporcurso(Alunos *a, int codigo_curso);
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
 
 void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
-void exibir_disciplinasporaluno(Arv_Cursos *curso, int matricula_aluno);
+void exibir_disciplinasporaluno(Alunos *aluno, Arv_Cursos *cursos, int matricula);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
 void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
@@ -81,7 +84,7 @@ void remover_no_folha(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *a
 void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
 void remover_no_com_dois_filhos(Arv_Matricula *atual);
 
-void cadastrar_disciplina(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, char *nome_disciplina, int periodo, int cargahoraria);
+int cadastrar_disciplina(Arv_Cursos **curso, Arv_Disciplina *No, int idcurso);
 void exibir_nota_aluno_disciplina(Arv_Cursos *curso, int codigo_curso, int matricula, int codigo_disciplina);
 
 void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula);
