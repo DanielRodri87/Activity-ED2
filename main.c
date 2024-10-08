@@ -34,13 +34,13 @@ int main()
 
     Alunos *aluno = NULL;
     Arv_Cursos *arv_curso = NULL;
-    Arv_Disciplina *arv_disciplina = NULL;
-    Arv_Notas *arv_nota = NULL;
+    Arv_Notas *arv_notas = NULL;
+    Arv_Disciplina *arv_disciplina = NULL, *disc;
     Arv_Matricula *arv_matricula = NULL;
 
-    int matricula, codigo_curso, quantidade_periodos, codigo_disciplina, periodo, ch, entrada_mat, saida;
-    float nota_final, semestre;
-    char nome[40], nome_curso[100], nome_disciplina[100];
+    int matricula, codigo_curso, codigo_curso_teste, quantidade_periodos, codigo_disciplina, entrada_mat, entrada_disc, saida, coddisc;
+    float periodo;
+    char nome[40], nome_curso[100];
 
     do
     {
@@ -58,7 +58,7 @@ int main()
             scanf("%d", &matricula);
             printf("Informe o código do curso: ");
             scanf("%d", &codigo_curso);
-            cadastrar_aluno(arv_curso, matricula, nome, codigo_curso);
+            cadastrar_aluno(&aluno, matricula, nome, codigo_curso);
             break;
         case 2:
             // Cadastrar Curso
@@ -71,76 +71,95 @@ int main()
             cadastrar_curso(&arv_curso, codigo_curso, nome_curso, quantidade_periodos);
             break;
         case 3:
-            // Cadastrar Disciplina
-            printf("Informe o código do curso: ");
-            scanf("%d", &codigo_curso);
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            printf("Informe o nome da disciplina: ");
-            scanf("%s", nome_disciplina);
-            printf("Informe o período: ");
-            scanf("%d", &periodo);
-            printf("Informe a carga horária: ");
-            scanf("%d", &ch);
-            cadastrar_disciplina(arv_curso, codigo_curso, codigo_disciplina, nome_disciplina, periodo, ch);
-            break;
-        case 4:
-            // Cadastrar Matrícula
-            printf("Digite a matrícula que voce deseja cadastrar: ");
-            scanf("%d", &entrada_mat);
-
-            saida = cadastrar_matricula(&arv_matricula, entrada_mat);
-            if (saida)
-                printf("Matricula realizada com sucesso\n");
-            else
-                printf("Matricula nao realizada\n");
-            break;
-
-        case 5:
-            printf("Informe a matrícula do aluno: ");
-            scanf("%d", &matricula);
-
-            Alunos *current_aluno = buscar_aluno_por_matricula(aluno, matricula);
-            if (current_aluno == NULL)
+            if (arv_curso == NULL)
             {
-                printf("Aluno não encontrado!\n");
+                printf("Erro: Nenhum curso cadastrado. Cadastre um curso primeiro.\n");
                 break;
             }
 
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            printf("Informe o semestre: ");
-            scanf("%f", &semestre); 
-            printf("Informe a nota final: ");
-            scanf("%f", &nota_final); 
-
-            if (current_aluno->notas == NULL)
+            disc = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+            if (!disc)
             {
-                current_aluno->notas = (Arv_Notas *)malloc(sizeof(Arv_Notas));
-                if (current_aluno->notas == NULL)
-                {
-                    printf("Erro ao alocar memória para notas.\n");
-                    break;
-                }
-                
-                current_aluno->notas->esq = NULL;
-                current_aluno->notas->dir = NULL;
+                printf("Erro ao alocar memória para disciplina.\n");
+                break;
             }
 
-            // Cadastrar nota
-            if (cadastro_nota(&current_aluno, matricula, codigo_disciplina, semestre, nota_final))
+            printf("Digite o nome da disciplina: ");
+            scanf("%s", disc->nome_disciplina);
+            printf("Digite o código do curso: ");
+            scanf("%d", &codigo_curso);
+            printf("Digite a carga horaria da disciplina: ");
+            scanf("%d", &disc->carga_horaria);
+            printf("Digite o periodo da disciplina: ");
+            scanf("%d", &disc->periodo);
+
+            // Verificar se o curso existe
+            Arv_Cursos *curso_encontrado = buscar_curso(arv_curso, codigo_curso); // Função para buscar curso
+            if (!curso_encontrado)
             {
-                printf("Nota cadastrada com sucesso.\n");
+                printf("Erro: Curso não encontrado.\n");
+                free(disc);
+                break;
+            }
+
+            gerar_codigo_disc(disc->carga_horaria, disc->periodo, &coddisc);
+            disc->codigo_disciplina = coddisc;
+
+            // Tentar cadastrar a disciplina
+            saida = cadastrar_disciplina(&curso_encontrado, disc, codigo_curso);
+            if (saida)
+            {
+                printf("\nCódigo da disciplina gerado: %d\n", coddisc);
+                printf("\nDisciplina cadastrada com sucesso!\n");
             }
             else
-                printf("Erro ao cadastrar a nota. Verifique se a disciplina está matriculada.\n");
+            {
+                printf("Erro ao cadastrar disciplina.\n");
+                free(disc);
+            }
+            break;
+
+        case 4:
+            // Cadastrar Matrícula
+            printf("Digite a matrícula da disciplina: ");
+            scanf("%d", &entrada_disc);
+            printf("Digite a matrícula do aluno: ");
+            scanf("%d", &entrada_mat);
+
+            cadastrar_matricula(&aluno, entrada_disc, entrada_mat);
+            break;
+
+        case 5:
+            printf("Digite a matrícula do aluno: ");
+            scanf("%d", &matricula);
+
+            printf("Digite o código da disciplina: ");
+            scanf("%d", &codigo_disciplina);
+
+            printf("Digite o semestre (número inteiro): ");
+            scanf("%d", &quantidade_periodos); 
+
+            printf("Digite a nota final: ");
+            scanf("%f", &periodo); 
+
+            // Tentar cadastrar a nota
+            saida = cadastrar_nota(&aluno, matricula, codigo_disciplina, quantidade_periodos, periodo);
+
+            if (saida == 1)
+            {
+                printf("Nota cadastrada com sucesso e disciplina removida da árvore de matrículas.\n");
+            }
+            else
+            {
+                printf("Erro: Não foi possível cadastrar a nota. Verifique se a disciplina está matriculada.\n");
+            }
             break;
 
         case 6:
             // Mostrar Alunos de um Curso
             printf("Digite o código do curso: ");
             scanf("%d", &codigo_curso);
-            exibir_alunosporcurso(arv_curso, codigo_curso);
+            alunosporcurso(aluno, codigo_curso);
             break;
         case 7:
             // Mostrar Cursos do Campus
@@ -155,28 +174,31 @@ int main()
         case 9:
             // Mostrar Disciplinas de um Período
             printf("Digite o período desejado: ");
-            scanf("%d", &periodo);
+            scanf("%f", &periodo);
             exibir_disciplina_periodo(arv_curso, periodo);
             break;
         case 10:
             // Mostrar Disciplinas Matriculadas
             printf("Digite a matrícula do aluno: ");
             scanf("%d", &matricula);
-            exibir_disciplinasporaluno(arv_curso, matricula);
+            exibir_disciplinasporaluno(aluno, arv_curso, matricula);
             break;
         case 11:
-            // Mostrar Notas por Período
-            printf("Digite o período desejado: ");
-            scanf("%d", &periodo);
-            exibir_notas_periodo(arv_nota, arv_disciplina, periodo);
+            printf("Digite matricula: ");
+            scanf("%d", &matricula);
+            printf("Digite o período: ");
+            scanf("%f", &periodo);
+
+            notas_disciplina_periodo_aluno(aluno, periodo, matricula);
             break;
+
         case 12:
-            // Mostrar Nota de uma Disciplina
             printf("Digite a matrícula do aluno: ");
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
-            exibir_notadisciplina(aluno, arv_curso, matricula, codigo_disciplina);
+
+            exibir_nota_aluno_disciplina(aluno, arv_curso, matricula, codigo_disciplina);
             break;
         case 13:
             // Remover Disciplina de Curso
@@ -196,7 +218,7 @@ int main()
             // Mostrar Histórico do Aluno
             printf("Digite a matrícula do aluno: ");
             scanf("%d", &matricula);
-            buscar_aluno_xv(aluno, matricula, arv_curso);
+            // buscar_aluno_xv(aluno, matricula, arv_curso);
             break;
         case 16:
             // Sair do programa
