@@ -102,7 +102,7 @@ int main()
                 break;
             }
 
-            gerar_codigo_disc(disc->carga_horaria, disc->periodo, &coddisc);
+            gerar_codigo_disc(&coddisc);
             disc->codigo_disciplina = coddisc;
 
             // Tentar cadastrar a disciplina

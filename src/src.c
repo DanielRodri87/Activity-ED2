@@ -178,6 +178,15 @@ void buscar_disciplina(Arv_Matricula *m, int cod, int *enc)
     }
 }
 
+Alunos *buscar_aluno(Alunos *aluno, int matricula)
+{
+    while (aluno != NULL && aluno->matricula != matricula) 
+        aluno = aluno->prox; 
+    
+    return aluno; 
+}
+
+
 int ehfolhamat(Arv_Matricula *m)
 {
     return (m->esq == NULL && m->dir == NULL);
@@ -458,7 +467,7 @@ void exibir_disciplinas(Arv_Disciplina *disciplina, int codigo_disciplina)
 {
     if (disciplina != NULL)
     {
-        if (disciplina->codigo_disciplina== codigo_disciplina)
+        if (disciplina->codigo_disciplina == codigo_disciplina)
         {
             printf("Codigo: %d\n", disciplina->codigo_disciplina);
             printf("Nome: %s\n", disciplina->nome_disciplina);
@@ -709,13 +718,6 @@ void gerar_codigo_disc(int ch, int periodo, int *codigo_disciplina)
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-Alunos *buscar_aluno(Alunos *alunos, int matricula)
-{
-    while (alunos != NULL && alunos->matricula != matricula)
-        alunos = alunos->prox;
-    return alunos;
-}
-
 Arv_Disciplina *buscar_disciplina_2(Arv_Disciplina *disciplina, int codigo_disciplina)
 {
     while (disciplina != NULL && disciplina->codigo_disciplina != codigo_disciplina)
@@ -753,27 +755,28 @@ void exibir_informacoes(Arv_Disciplina *disciplina_atual, Arv_Notas *nota_atual)
 
 void exibir_nota_aluno_disciplina(Alunos *a, Arv_Cursos *curso, int matricula, int codigo_disciplina)
 {
-    if(a != NULL)
+    if (a != NULL)
     {
-        if(a->matricula == matricula)
+        if (a->matricula == matricula)
         {
             Arv_Notas *nota = a->notas;
-            while(nota != NULL)
+            while (nota != NULL)
             {
-                if(nota->codigo_disciplina == codigo_disciplina)
+                if (nota->codigo_disciplina == codigo_disciplina)
                 {
                     Arv_Disciplina *d = curso->disciplina;
-                    while(d != NULL){
-                        if(d->codigo_disciplina == codigo_disciplina)
-                            printf("Aluno: %s\nDisciplina: %d\nPeriodo: %d\nCH: %d\nNota Final: %.2f\n", 
-                            a->nome, nota->codigo_disciplina, d->periodo, d->carga_horaria, nota->nota_final);
-                        if(codigo_disciplina < d->codigo_disciplina)
+                    while (d != NULL)
+                    {
+                        if (d->codigo_disciplina == codigo_disciplina)
+                            printf("Aluno: %s\nDisciplina: %d\nPeriodo: %d\nCH: %d\nNota Final: %.2f\n",
+                                   a->nome, nota->codigo_disciplina, d->periodo, d->carga_horaria, nota->nota_final);
+                        if (codigo_disciplina < d->codigo_disciplina)
                             d = d->esq;
                         else
                             d = d->dir;
                     }
                 }
-                if(codigo_disciplina < nota->codigo_disciplina)
+                if (codigo_disciplina < nota->codigo_disciplina)
                     nota = nota->esq;
                 else
                     nota = nota->dir;
@@ -783,7 +786,6 @@ void exibir_nota_aluno_disciplina(Alunos *a, Arv_Cursos *curso, int matricula, i
             exibir_nota_aluno_disciplina(a->prox, curso, matricula, codigo_disciplina);
     }
 }
-
 
 // void exibir_notas_periodo(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo)
 // {
@@ -859,110 +861,98 @@ Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int co
 // XIII - Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
 // mesma.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
-int ehfolha(Arv_Disciplina *r)
+int verificar_matriculas_alunos(Alunos *aluno, int codigo_disciplina)
 {
-    int retorno = 0;
-    if (r != NULL)
+    if (aluno != NULL)
     {
-        if ((r->esq == NULL) && (r->dir == NULL))
-            retorno = 1;
+        int encontrado = 0;
+        Arv_Matricula *matricula = aluno->mat;
 
-        ehfolha(r->esq);
-        ehfolha(r->dir);
-    }
-}
-
-Arv_Disciplina *so_um_filho(Arv_Disciplina *r)
-{
-    Arv_Disciplina *filho = NULL;
-
-    if (r->esq != NULL && r->dir == NULL)
-        filho = r->esq;
-    else if (r->esq == NULL && r->dir != NULL)
-        filho = r->dir;
-
-    return filho;
-}
-
-Arv_Disciplina *menor_filho_esquerda_disciplina(Arv_Disciplina *r)
-{
-    Arv_Disciplina *aux;
-    aux = NULL;
-    if (r != NULL)
-    {
-        if (r->esq != NULL)
-            aux = menor_filho_esquerda_disciplina(r->esq);
-    }
-    return (aux);
-}
-
-int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina)
-{
-    Arv_Disciplina *aux;
-    Arv_Disciplina *end_filho;
-    Arv_Disciplina *end_menor_filho;
-    int retorno = 0;
-
-    if (*r != NULL)
-    {
-        if ((*r)->codigo_disciplina == codigo_disciplina)
+        while (matricula != NULL && !encontrado)
         {
-            if (ehfolha(*r))
-            {
-                aux = *r;
-                *r = NULL;
-                free(aux);
-                retorno = 1;
-            }
-            else if ((end_filho = so_um_filho(*r)) != NULL)
-            {
-                aux = *r;
-                *r = end_filho;
-                free(aux);
-                retorno = 1;
-            }
+            if (matricula->codigo_disciplina == codigo_disciplina)
+                encontrado = 1;
+
+            else if (codigo_disciplina < matricula->codigo_disciplina)
+                matricula = matricula->esq;
+
             else
-            {
-                end_menor_filho = menor_filho_esquerda_disciplina((*r)->dir);
-                (*r)->codigo_disciplina = end_menor_filho->codigo_disciplina;
-                retorno = remover_disciplina_xiii(&(*r)->dir, end_menor_filho->codigo_disciplina);
-            }
+                matricula = matricula->dir;
         }
-        else if (codigo_disciplina < (*r)->codigo_disciplina)
-            retorno = remover_disciplina_xiii(&(*r)->esq, codigo_disciplina);
-        else
-            retorno = remover_disciplina_xiii(&(*r)->dir, codigo_disciplina);
+
+        if (!encontrado)
+            encontrado = verificar_matriculas_alunos(aluno->prox, codigo_disciplina);
+
+        return (encontrado);
     }
+}
+
+int ehfolha(Arv_Disciplina *disc)
+{
+    return (disc->esq == NULL && disc->dir == NULL);
+}
+
+Arv_Disciplina *soumfilho(Arv_Disciplina *disc)
+{
+    Arv_Disciplina *retorno;
+    if (disc->esq == NULL)
+        retorno = disc->dir;
+    if (disc->dir == NULL)
+        retorno = disc->esq;
+
     return (retorno);
 }
 
-void confirmar_remocao(Alunos *r, int codigo_disciplina, int *validar_disc)
+Arv_Disciplina *menorfilhoesq(Arv_Disciplina *disc)
 {
-    int enc = 0;
-    if (r != NULL)
-    {
-        buscar_matricula(r->mat, codigo_disciplina, &enc);
-        if (enc != 0)
-            *validar_disc = 1;
-        confirmar_remocao(r->prox, codigo_disciplina, validar_disc);
-    }
+    Arv_Disciplina *aux = disc->esq;
+    while (aux->dir != NULL)
+        aux = aux->dir;
+
+    return aux;
 }
 
-int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, int codigo_disc)
+int remover_disciplina_curso(Arv_Disciplina **raiz, int codigo_disciplina)
 {
-    int remove = 0, confirmar_disc = 0;
-    if (*curso != NULL)
+    int retorno = 0;
+    if (*raiz != NULL)
     {
-        confirmar_remocao(alunos, codigo_disc, &confirmar_disc);
-        if (confirmar_disc != 0)
+        if ((*raiz)->codigo_disciplina == codigo_disciplina)
         {
-            if ((*curso)->codigo_curso == id_curso)
-                remove = remover_disciplina_xiii(&(*curso)->disciplina, codigo_disc);
-            else if (id_curso < (*curso)->codigo_curso)
-                remove = remover_disciplina_curso(&(*curso)->esq, alunos, id_curso, codigo_disc);
+            Arv_Disciplina *aux;
+
+            if (ehfolha(*raiz))
+            {
+                aux = *raiz;
+                free(aux);
+                *raiz = NULL;
+            }
+            else if ((aux = soumfilho(*raiz)) != NULL)
+            {
+                free(*raiz);
+                *raiz = aux;
+            }
             else
-                remove = remover_disciplina_curso(&(*curso)->dir, alunos, id_curso, codigo_disc);
+            {
+                Arv_Disciplina *menor = menorfilhoesq((*raiz)->dir);
+                (*raiz)->codigo_disciplina = menor->codigo_disciplina;
+                strcpy((*raiz)->nome_disciplina, menor->nome_disciplina);
+                (*raiz)->carga_horaria = menor->carga_horaria;
+                (*raiz)->periodo = menor->periodo;
+                remover_disciplina_curso(&(*raiz)->dir, menor->codigo_disciplina);
+            }
+            retorno = 1; 
         }
+        else if (codigo_disciplina < (*raiz)->codigo_disciplina)
+        {
+            retorno = remover_disciplina_curso(&(*raiz)->esq, codigo_disciplina);
+        }
+        else
+        {
+            retorno = remover_disciplina_curso(&(*raiz)->dir, codigo_disciplina);
+        }
+
+        return (retorno);
     }
 }
 

@@ -77,7 +77,7 @@ void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina);
 void exibir_disciplinasporaluno(Alunos *aluno, Arv_Cursos *cursos, int matricula);
 void exibir_disciplinasporalunos_recursivamente(Arv_Disciplina *disciplina);
 
-void remover_disciplinaaluno(Arv_Matricula **raiz, int codigo_disciplina);
+void remover_matricula(Arv_Matricula **m, int cod);
 void localizar_no(Arv_Matricula **atual, Arv_Matricula **pai, int codigo_disciplina, int *encontrado);
 void remover_no(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
 void remover_no_folha(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matricula *atual);
@@ -91,11 +91,12 @@ void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula);
 Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int codigo);
 void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo);
 
-int remover_disciplina_curso(Arv_Cursos **curso, Alunos *alunos, int id_curso, int codigo_disc);
+int verificar_matriculas_alunos(Alunos *aluno, int codigo_disciplina);
+int remover_disciplina_curso(Arv_Disciplina **raiz, int codigo_disciplina);
 void confirmar_remocao(Alunos *r, int cod_disc, int *validar_disc);
 int remover_disciplina_xiii(Arv_Disciplina **r, int codigo_disciplina);
 
-void buscar_aluno_xv(Alunos *aluno, int matricula, Arv_Cursos *r);
+Alunos *buscar_aluno(Alunos *aluno, int matricula);
 
 void exibir_alunos(Alunos *lista);
 void exibir_matriculas(Arv_Matricula *r);
