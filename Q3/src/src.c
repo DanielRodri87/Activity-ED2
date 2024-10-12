@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <time.h>
 
-
 int contador_disciplina = 1;
 
 void gerar_codigo_disc(int *codigo_disciplina)
@@ -13,7 +12,6 @@ void gerar_codigo_disc(int *codigo_disciplina)
     *codigo_disciplina = contador_disciplina;
     contador_disciplina++;
 }
-
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // I - Cadastrar alunos a qualquer momento na lista, de forma que só possa cadastrar um código de curso que
@@ -66,6 +64,113 @@ void cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
 // as disciplinas para permitir o cadastro do curso.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
+Arv_Cursos *alocar_no_curso()
+{
+    Arv_Cursos *novo = (Arv_Cursos *)malloc(sizeof(Arv_Cursos));
+    if (novo == NULL)
+        printf("Erro ao alocar memória para o curso.\n");
+
+    novo->info = (Cursos_Info *)malloc(sizeof(Cursos_Info));
+    if (novo->info == NULL)
+        printf("Erro ao alocar memória para as informações do curso.\n");
+
+    novo->esq = NULL;
+    novo->dir = NULL;
+    novo->altura = 1;
+
+    return (novo);
+}
+
+int altura_curso(Arv_Cursos *curso)
+{
+    int h = 0;
+    if (curso != NULL)
+        h = curso->altura;
+
+    return (h);
+}
+
+void atualizar_altura_curso(Arv_Cursos *curso)
+{
+    if (curso != NULL)
+    {
+        int altura_esq = altura_curso(curso->esq);
+        int altura_dir = altura_curso(curso->dir);
+
+        if (altura_esq > altura_dir)
+            curso->altura = 1 + altura_esq;
+        else
+            curso->altura = 1 + altura_dir;
+    }
+}
+
+int fator_balanceamento_curso(Arv_Cursos *curso)
+{
+    int fb = 0;
+    if (curso != NULL)
+        fb = altura_curso(curso->esq) - altura_curso(curso->dir);
+    return fb;
+}
+
+void rotacaoDir_curso(Arv_Cursos **raiz)
+{
+    Arv_Cursos *nova_raiz = (*raiz)->esq;
+    (*raiz)->esq = nova_raiz->dir;
+    nova_raiz->dir = *raiz;
+    atualizar_altura_curso(*raiz);
+    atualizar_altura_curso(nova_raiz);
+    *raiz = nova_raiz;
+}
+
+void rotacaoEsq_curso(Arv_Cursos **raiz)
+{
+    Arv_Cursos *nova_raiz = (*raiz)->dir;
+    (*raiz)->dir = nova_raiz->esq;
+    nova_raiz->esq = *raiz;
+    atualizar_altura_curso(*raiz);
+    atualizar_altura_curso(nova_raiz);
+    *raiz = nova_raiz;
+}
+
+void balanceamento_curso(Arv_Cursos **curso)
+{
+    int fb = fator_balanceamento_curso(*curso);
+
+    if (fb == 2)
+    {
+        if (fator_balanceamento_curso((*curso)->esq) < 0)
+            rotacaoEsq_curso(&((*curso)->esq));
+        rotacaoDir_curso(curso);
+    }
+    else if (fb == -2)
+    {
+        if (fator_balanceamento_curso((*curso)->dir) > 0)
+            rotacaoDir_curso(&((*curso)->dir));
+        rotacaoEsq_curso(curso);
+    }
+}
+
+void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos)
+{
+    if (*curso == NULL)
+    {
+        *curso = alocar_no_curso();
+        (*curso)->info->codigo_curso = codigo_curso;
+        strcpy((*curso)->info->nome_curso, nome_curso);
+        (*curso)->info->quantidade_periodos = quantidade_periodos;
+        (*curso)->info->alunos = NULL;
+        (*curso)->esq = NULL;
+        (*curso)->dir = NULL;
+    }
+    else if (codigo_curso < (*curso)->info->codigo_curso)
+        cadastrar_curso(&((*curso)->esq), codigo_curso, nome_curso, quantidade_periodos);
+    else if (codigo_curso > (*curso)->info->codigo_curso)
+        cadastrar_curso(&((*curso)->dir), codigo_curso, nome_curso, quantidade_periodos);
+
+
+    atualizar_altura_curso(*curso);
+    balanceamento_curso(curso);
+}
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // III -  Cadastrar disciplinas a qualquer momento em uma árvore de disciplinas de um determinado curso, ou
@@ -73,7 +178,6 @@ void cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
 // disciplina deve ser válido, ou seja, estar entre 1 e a quantidade máxima de períodos do curso. A carga
 // horária da disciplina deve ser múltiplo de 15, variando entre 30 e 90.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
-
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // IV - Cadastrar uma matrícula, onde a mesma é uma árvore organizada e contendo somente um código de
@@ -160,9 +264,9 @@ void exibir_disciplina_periodo(Arv_Cursos *raiz, int periodo)
 {
     if (raiz != NULL)
     {
-        if (raiz->info->disciplina->periodo == periodo)
+        if (raiz->info->disciplina->info->periodo == periodo)
         {
-            printf("Curso: %s | Disciplina: %s | Período: %d\n", raiz->info->nome_curso, raiz->info->disciplina->nome_disciplina, raiz->info->disciplina->periodo);
+            printf("Curso: %s | Disciplina: %s | Período: %d\n", raiz->info->nome_curso, raiz->info->disciplina->info->nome_disciplina, raiz->info->disciplina->info->periodo);
             exibir_disciplina_periodo(raiz->esq, periodo);
             exibir_disciplina_periodo(raiz->dir, periodo);
         }
@@ -296,7 +400,6 @@ void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricul
     }
 }
 
-
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XIII - Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
 // mesma.
@@ -312,19 +415,20 @@ void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricul
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 void exibir_disciplina_historico(Arv_Disciplina *disciplina, int codigo_disciplina)
 {
-    if(disciplina != NULL)
+    if (disciplina != NULL)
     {
-        if(disciplina->info->codigo_disciplina == codigo_disciplina) 
+        if (disciplina->info->codigo_disciplina == codigo_disciplina)
             printf("Disciplina: %s\n", disciplina->info->nome_disciplina);
-        else if(codigo_disciplina < disciplina->info->codigo_disciplina)
+        else if (codigo_disciplina < disciplina->info->codigo_disciplina)
             exibir_disciplina_historico(disciplina->esq, codigo_disciplina);
         else
             exibir_disciplina_historico(disciplina->dir, codigo_disciplina);
     }
 }
 
-void exibir_notas_alunos(Arv_Notas *nota, Arv_Disciplina *disciplina, int periodo) {
-    if(nota != NULL)
+void exibir_notas_alunos(Arv_Notas *nota, Arv_Disciplina *disciplina, int periodo)
+{
+    if (nota != NULL)
     {
         if (nota->info->semestre == periodo)
         {
@@ -333,25 +437,23 @@ void exibir_notas_alunos(Arv_Notas *nota, Arv_Disciplina *disciplina, int period
             printf("Semestre: %.1f\n\n", nota->info->semestre);
             printf("Nota: %.2f\n", nota->info->nota_final);
             printf("\n------------------\n");
-
         }
         exibir_notas_alunos(nota->esq, disciplina, periodo);
         exibir_notas_alunos(nota->dir, disciplina, periodo);
     }
 }
 
-
 int exibir_nome_do_curso(Arv_Cursos *curso, int codigo_curso)
 {
     int count_periodos = 0;
-    if(curso != NULL)
+    if (curso != NULL)
     {
-        if(curso->info->codigo_curso == codigo_curso)
+        if (curso->info->codigo_curso == codigo_curso)
         {
             printf("Curso: %s\n", curso->info->nome_curso);
             count_periodos = curso->info->quantidade_periodos;
         }
-        else if(codigo_curso < curso->info->codigo_curso)
+        else if (codigo_curso < curso->info->codigo_curso)
             count_periodos = exibir_nome_do_curso(curso->esq, codigo_curso);
         else
             count_periodos = exibir_nome_do_curso(curso->dir, codigo_curso);
@@ -361,9 +463,9 @@ int exibir_nome_do_curso(Arv_Cursos *curso, int codigo_curso)
 
 void consultar_historico(Alunos *aluno, Arv_Cursos *curso, int matricula)
 {
-    if(aluno != NULL)
+    if (aluno != NULL)
     {
-        if(aluno->matricula == matricula)
+        if (aluno->matricula == matricula)
         {
             printf("\n------------------\n");
             printf("Matricula: %d\n", aluno->matricula);
@@ -373,7 +475,7 @@ void consultar_historico(Alunos *aluno, Arv_Cursos *curso, int matricula)
             count_periodos = exibir_nome_do_curso(curso, aluno->codigo_curso);
             printf("Historico:\n");
             for (int i = 0; i < count_periodos; i++)
-                exibir_notas_alunos(aluno->notas, curso->info->disciplina, i+1);
+                exibir_notas_alunos(aluno->notas, curso->info->disciplina, i + 1);
         }
         else
             consultar_historico(aluno->prox, curso, matricula);

@@ -60,7 +60,7 @@ typedef struct cursos_info
     int codigo_curso;
     char nome_curso[100];
     int quantidade_periodos;
-    Disciplinas_Info *disciplina;
+    Arv_Disciplina *disciplina;
     Alunos *alunos;
 } Cursos_Info;
 
