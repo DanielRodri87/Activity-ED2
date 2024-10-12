@@ -127,5 +127,6 @@ void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matri
 void remover_no_com_dois_filhos(Arv_Matricula *atual);
 Alunos *buscar_aluno(Alunos *aluno, int matricula);
 void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado);
+
 #endif
 
