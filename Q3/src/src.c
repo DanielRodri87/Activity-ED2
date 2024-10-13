@@ -179,10 +179,269 @@ void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curs
 // horária da disciplina deve ser múltiplo de 15, variando entre 30 e 90.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
+// Função para alocar um novo nó de disciplina
+Arv_Disciplina *alocar_no_disciplina() {
+    Arv_Disciplina *novo = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+    Disciplinas_Info *info = NULL;
+
+    if (novo != NULL) {
+        info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (info == NULL) {
+            printf("Erro ao alocar memória para as informações da disciplina.\n");
+            free(novo);
+            novo = NULL;  
+        } else {
+            novo->info = info;
+            novo->esq = NULL;
+            novo->dir = NULL;
+            novo->altura = 1;
+        }
+    } else {
+        printf("Erro ao alocar memória para a disciplina.\n");
+    }
+
+    return novo;
+}
+
+// Função para obter a altura de uma árvore de disciplinas
+int altura_disciplina(Arv_Disciplina *disciplina) {
+    int h = 0;
+    if (disciplina != NULL)
+        h = disciplina->altura;
+    return h;
+}
+
+// Função para atualizar a altura de uma árvore de disciplinas
+void atualizar_altura_disciplina(Arv_Disciplina *disciplina) {
+    if (disciplina != NULL) {
+        int altura_esq = altura_disciplina(disciplina->esq);
+        int altura_dir = altura_disciplina(disciplina->dir);
+        
+        if (altura_esq > altura_dir)
+            disciplina->altura = 1 + altura_esq;
+        else
+            disciplina->altura = 1 + altura_dir;
+    }
+}
+
+// Função para calcular o fator de balanceamento de uma árvore de disciplinas
+int fator_balanceamento_disciplina(Arv_Disciplina *disciplina) {
+    int fb = 0;
+    if (disciplina != NULL)
+        fb = altura_disciplina(disciplina->esq) - altura_disciplina(disciplina->dir);
+    return fb;
+}
+
+// Rotação à direita
+void rotacaoDir_disciplina(Arv_Disciplina **raiz) {
+    Arv_Disciplina *nova_raiz = (*raiz)->esq;
+    (*raiz)->esq = nova_raiz->dir;
+    nova_raiz->dir = *raiz;
+    
+    atualizar_altura_disciplina(*raiz);
+    atualizar_altura_disciplina(nova_raiz);
+    
+    *raiz = nova_raiz;
+}
+
+// Rotação à esquerda
+void rotacaoEsq_disciplina(Arv_Disciplina **raiz) {
+    Arv_Disciplina *nova_raiz = (*raiz)->dir;
+    (*raiz)->dir = nova_raiz->esq;
+    nova_raiz->esq = *raiz;
+    
+    atualizar_altura_disciplina(*raiz);
+    atualizar_altura_disciplina(nova_raiz);
+    
+    *raiz = nova_raiz;
+}
+
+// Função de balanceamento da árvore de disciplinas
+void balanceamento_disciplina(Arv_Disciplina **disciplina) {
+    int fb = fator_balanceamento_disciplina(*disciplina);
+    
+    if (fb > 1) {
+        if (fator_balanceamento_disciplina((*disciplina)->esq) < 0)
+            rotacaoEsq_disciplina(&((*disciplina)->esq));
+        rotacaoDir_disciplina(disciplina);
+    } else if (fb < -1) {
+        if (fator_balanceamento_disciplina((*disciplina)->dir) > 0)
+            rotacaoDir_disciplina(&((*disciplina)->dir));
+        rotacaoEsq_disciplina(disciplina);
+    }
+}
+
+// Função para cadastrar disciplina no curso
+void cadastrar_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina, const char *nome_disciplina, int periodo, int carga_horaria, int max_periodos) {
+    if (periodo < 1 || periodo > max_periodos || carga_horaria % 15 != 0 || carga_horaria < 30 || carga_horaria > 90) {
+        printf("Erro: dados inválidos para disciplina.\n");
+        return;
+    }
+    
+    if (*disciplina == NULL) {
+        *disciplina = alocar_no_disciplina();
+        if (*disciplina != NULL) {
+            (*disciplina)->info->codigo_disciplina = codigo_disciplina;
+            strcpy((*disciplina)->info->nome_disciplina, nome_disciplina);
+            (*disciplina)->info->periodo = periodo;
+            (*disciplina)->info->carga_horaria = carga_horaria;
+        }
+    } else {
+        if (codigo_disciplina < (*disciplina)->info->codigo_disciplina)
+            cadastrar_disciplina(&((*disciplina)->esq), codigo_disciplina, nome_disciplina, periodo, carga_horaria, max_periodos);
+        else if (codigo_disciplina > (*disciplina)->info->codigo_disciplina)
+            cadastrar_disciplina(&((*disciplina)->dir), codigo_disciplina, nome_disciplina, periodo, carga_horaria, max_periodos);
+    }
+    
+    atualizar_altura_disciplina(*disciplina);
+    balanceamento_disciplina(disciplina);
+}
+
+// Função para buscar um curso e cadastrar a disciplina nele
+void cadastrar_disciplina_no_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, const char *nome_disciplina, int periodo, int carga_horaria) {
+    while (curso != NULL && curso->info->codigo_curso != codigo_curso) {
+        if (codigo_curso < curso->info->codigo_curso)
+            curso = curso->esq;
+        else
+            curso = curso->dir;
+    }
+    
+    if (curso == NULL) {
+        printf("Erro: Curso não encontrado.\n");
+        return;
+    }
+
+    cadastrar_disciplina(&(curso->info->disciplina), codigo_disciplina, nome_disciplina, periodo, carga_horaria, curso->info->quantidade_periodos);
+}
+
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // IV - Cadastrar uma matrícula, onde a mesma é uma árvore organizada e contendo somente um código de
 // uma disciplina do curso do aluno.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
+
+// Função para alocar um novo nó de matrícula
+Arv_Matricula *alocar_no_matricula() {
+    Arv_Matricula *novo = (Arv_Matricula *)malloc(sizeof(Arv_Matricula));
+    Matriculas_Info *info = NULL;
+    
+    if (novo != NULL) {
+        info = (Matriculas_Info *)malloc(sizeof(Matriculas_Info));
+        if (info == NULL) {
+            printf("Erro ao alocar memória para as informações da matrícula.\n");
+            free(novo);
+            novo = NULL;  
+        } else {
+            novo->info = info;
+            novo->esq = NULL;
+            novo->dir = NULL;
+            novo->altura = 1;
+        }
+    } else {
+        printf("Erro ao alocar memória para a matrícula.\n");
+    }
+
+    return novo;
+}
+
+// Função para obter a altura de uma árvore de matrículas
+int altura_matricula(Arv_Matricula *matricula) {
+    if (matricula == NULL)
+        return 0;
+    return matricula->altura;
+}
+
+// Função para atualizar a altura de uma árvore de matrículas
+void atualizar_altura_matricula(Arv_Matricula *matricula) {
+    if (matricula != NULL) {
+        int altura_esq = altura_matricula(matricula->esq);
+        int altura_dir = altura_matricula(matricula->dir);
+        matricula->altura = 1 + (altura_esq > altura_dir ? altura_esq : altura_dir);
+    }
+}
+
+// Função para calcular o fator de balanceamento de uma árvore de matrículas
+int fator_balanceamento_matricula(Arv_Matricula *matricula) {
+    int fb = 0;
+    if (matricula != NULL)
+        fb = altura_matricula(matricula->esq) - altura_matricula(matricula->dir);
+    return fb;
+}
+
+// Rotação à direita
+void rotacaoDir_matricula(Arv_Matricula **raiz) {
+    Arv_Matricula *nova_raiz = (*raiz)->esq;
+    (*raiz)->esq = nova_raiz->dir;
+    nova_raiz->dir = *raiz;
+    
+    atualizar_altura_matricula(*raiz);
+    atualizar_altura_matricula(nova_raiz);
+    
+    *raiz = nova_raiz;
+}
+
+// Rotação à esquerda
+void rotacaoEsq_matricula(Arv_Matricula **raiz) {
+    Arv_Matricula *nova_raiz = (*raiz)->dir;
+    (*raiz)->dir = nova_raiz->esq;
+    nova_raiz->esq = *raiz;
+    
+    atualizar_altura_matricula(*raiz);
+    atualizar_altura_matricula(nova_raiz);
+    
+    *raiz = nova_raiz;
+}
+
+// Função de balanceamento da árvore de matrículas
+void balanceamento_matricula(Arv_Matricula **matricula) {
+    int fb = fator_balanceamento_matricula(*matricula);
+    
+    if (fb > 1) {
+        if (fator_balanceamento_matricula((*matricula)->esq) < 0)
+            rotacaoEsq_matricula(&((*matricula)->esq));
+        rotacaoDir_matricula(matricula);
+    } else if (fb < -1) {
+        if (fator_balanceamento_matricula((*matricula)->dir) > 0)
+            rotacaoDir_matricula(&((*matricula)->dir));
+        rotacaoEsq_matricula(matricula);
+    }
+}
+
+// Função para cadastrar uma matrícula
+void cadastrar_matricula(Arv_Matricula **matricula, int codigo_disciplina) {
+    if (*matricula == NULL) {
+        *matricula = alocar_no_matricula();
+        if (*matricula != NULL) {
+            (*matricula)->info->codigo_disciplina = codigo_disciplina;
+        }
+    } else {
+        if (codigo_disciplina < (*matricula)->info->codigo_disciplina)
+            cadastrar_matricula(&((*matricula)->esq), codigo_disciplina);
+        else if (codigo_disciplina > (*matricula)->info->codigo_disciplina)
+            cadastrar_matricula(&((*matricula)->dir), codigo_disciplina);
+    }
+    
+    atualizar_altura_matricula(*matricula);
+    balanceamento_matricula(matricula);
+}
+
+// Função para buscar um aluno e cadastrar a matrícula nele
+void cadastrar_matricula_no_aluno(Alunos *aluno, int codigo_disciplina, Arv_Disciplina *disciplinas_do_curso) {
+    Arv_Disciplina *disciplina = disciplinas_do_curso;
+    while (disciplina != NULL && disciplina->info->codigo_disciplina != codigo_disciplina) {
+        if (codigo_disciplina < disciplina->info->codigo_disciplina)
+            disciplina = disciplina->esq;
+        else
+            disciplina = disciplina->dir;
+    }
+
+    if (disciplina == NULL) {
+        printf("Erro: Disciplina não encontrada no curso.\n");
+        return;
+    }
+
+    cadastrar_matricula(&(aluno->mat), codigo_disciplina);
+}
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // V - Cadastrar Notas, permitir o cadastro de notas somente de disciplinas que estejam na árvore de
@@ -405,9 +664,115 @@ void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricul
 // mesma.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
+// Função para verificar se há alunos matriculados em uma disciplina
+int tem_alunos_matriculados(Arv_Matricula *matricula) {
+    return (matricula != NULL); 
+}
+
+// Função para alocar um novo nó de disciplina
+Arv_Disciplina *alocar_no_disciplina() {
+    Arv_Disciplina *novo = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+    
+    if (novo != NULL) {
+        novo->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (novo->info == NULL) {
+            printf("Erro ao alocar memória para as informações da disciplina.\n");
+            free(novo);
+            return NULL;  
+        }
+        novo->esq = NULL;
+        novo->dir = NULL;
+        novo->altura = 1; 
+    } else {
+        printf("Erro ao alocar memória para a disciplina.\n");
+    }
+
+    return novo;
+}
+
+// Função para atualizar a altura da árvore de disciplinas
+void atualizar_altura_disciplina(Arv_Disciplina *disciplina) {
+    if (disciplina != NULL) {
+        int altura_esq = altura_disciplinas(disciplina->esq);
+        int altura_dir = altura_disciplinas(disciplina->dir);
+        disciplina->altura = 1 + (altura_esq > altura_dir ? altura_esq : altura_dir);
+    }
+}
+
+// Função para calcular o fator de balanceamento da árvore de disciplinas
+int fator_balanceamento_disciplina(Arv_Disciplina *disciplina) {
+    int fb = 0;
+    if (disciplina != NULL) {
+        fb = altura_disciplinas(disciplina->esq) - altura_disciplinas(disciplina->dir);
+    }
+    return fb;
+}
+
+// Função para remover uma disciplina da árvore
+void remover_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina) {
+    if (*disciplina == NULL) {
+        printf("Erro: Disciplina não encontrada.\n");
+    } else if (codigo_disciplina < (*disciplina)->info->codigo_disciplina) {
+        remover_disciplina(&((*disciplina)->esq), codigo_disciplina); 
+    } else if (codigo_disciplina > (*disciplina)->info->codigo_disciplina) {
+        remover_disciplina(&((*disciplina)->dir), codigo_disciplina); 
+    } else {
+        
+        if (tem_alunos_matriculados((*disciplina)->info->mat)) {
+            printf("Erro: Não é possível remover a disciplina, pois há alunos matriculados.\n");
+        } else {
+            
+            Arv_Disciplina *temp = NULL;
+            if ((*disciplina)->esq == NULL) {
+                temp = (*disciplina)->dir; 
+                free((*disciplina)->info); 
+                free(*disciplina); 
+                *disciplina = temp; 
+            } else if ((*disciplina)->dir == NULL) {
+                temp = (*disciplina)->esq; 
+                free((*disciplina)->info); 
+                free(*disciplina); 
+                *disciplina = temp; 
+            } else {
+                temp = (*disciplina)->dir;
+                while (temp->esq != NULL) {
+                    temp = temp->esq;
+                }
+
+                (*disciplina)->info->codigo_disciplina = temp->info->codigo_disciplina;
+                strcpy((*disciplina)->info->nome_disciplina, temp->info->nome_disciplina);
+                (*disciplina)->info->periodo = temp->info->periodo;
+                (*disciplina)->info->carga_horaria = temp->info->carga_horaria;
+
+                remover_disciplina(&((*disciplina)->dir), temp->info->codigo_disciplina);
+            }
+        }
+    }
+
+    atualizar_altura_disciplina(*disciplina);
+    balanceamento_disciplina(disciplina); 
+}
+
+
+// Função para remover uma disciplina de um curso
+void remover_disciplina_do_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina) {
+    while (curso != NULL && curso->info->codigo_curso != codigo_curso) {
+        curso = (codigo_curso < curso->info->codigo_curso) ? curso->esq : curso->dir;
+    }
+
+    if (curso == NULL) {
+        printf("Erro: Curso não encontrado.\n");
+        return;
+    }
+
+    remover_disciplina(&(curso->info->disciplina), codigo_disciplina);
+}
+
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XIV - Permita remover uma disciplina da árvore de matrícula de um determinado aluno.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
+
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XV - Mostrar o histórico de um determinado aluno, contendo o nome do curso, as disciplinas e sua respectiva

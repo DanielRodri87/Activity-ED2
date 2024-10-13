@@ -8,6 +8,7 @@ typedef struct disciplinas_info {
     char nome_disciplina[100];
     int periodo;
     int carga_horaria;
+    Arv_Matricula *mat; //adicionei isso aqui
 
 } Disciplinas_Info;
 
@@ -77,11 +78,11 @@ typedef struct Arv_Cursos
 
 FUNÇÕES QUE PRECISAM DE BALANCEAMENTO:
  - cadastrar_curso         --> Daniel
- - cadastrar_matricula     --> Cristina    
+ - cadastrar_matricula     --> Cristina feito em 13/10    
  - remover_matricula       --> Daniel
  - cadastrar_nota          --> Daniel
- - cadastrar_disciplina    --> Cristina
- - remover_disciplina      --> Cristina
+ - cadastrar_disciplina    --> Cristina feito em 13/10 
+ - remover_disciplina      --> Cristina feito metade dela em 13/10
 
 */
 
@@ -101,7 +102,7 @@ void exibir_alunos(Alunos *lista);
 void consultar_historico(Alunos *aluno, Arv_Cursos *curso, int matricula);
 
 // ---------- Funções relacionadas a Matrículas ------------
-void cadastrar_matricula(Alunos **a, int codigo, int mat);
+void cadastrar_matricula(Arv_Matricula **matricula, int codigo_disciplina);
 void remover_matricula(Arv_Matricula **m, int cod);
 void exibir_matriculas(Arv_Matricula *r);
 int verificar_matriculas_alunos(Alunos *aluno, int codigo_disciplina);
@@ -115,9 +116,10 @@ void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo
 
 // ---------- Funções Referentes a Disciplina ------------
 void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
-int cadastrar_disciplina(Arv_Cursos **curso, Arv_Disciplina *No, int idcurso);
+void cadastrar_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina, const char *nome_disciplina, int periodo, int carga_horaria, int max_periodos);
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
-int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina);
+void remover_disciplina_do_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina);
+//int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina); (essa não existe)
 void exibir_disciplinasporaluno(Alunos *aluno, Arv_Cursos *cursos, int matricula);
 
 
