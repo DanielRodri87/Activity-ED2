@@ -941,3 +941,76 @@ Arv_Disciplina *buscar_disciplina_por_codigo(Arv_Disciplina *disciplinas, int co
 
     return (aux);
 }
+
+
+//inicio da Q2
+
+#define QUANTIDADECURSOS 2000
+#define CODIGOCURSO 2000
+#define LOOP 15000
+
+
+
+//1. inserção de cada elemento na árvore de cursos
+
+//forma crescente
+void povoamentocrescente_cursos(Arv_Cursos **raiz) {
+    for (int i = 1; i <= QUANTIDADECURSOS; i++) {
+        cadastrar_curso(raiz, i, "MEDICINA", 12); 
+    }
+}
+
+//forma descrecente
+void povoamentodescrecente_cursos(Arv_Cursos **raiz) {
+    for (int i = QUANTIDADECURSOS; i > 0; i--) {
+        cadastrar_curso(raiz, i, "MEDICINA", 12); 
+    }
+}
+
+//forma aleatória
+void povoamentoaleatorio_cursos(Arv_Cursos **raiz) {
+    int i = 1;
+    while (i <= QUANTIDADECURSOS) {
+        int codigo_curso = rand() % QUANTIDADECURSOS + 1; 
+        cadastrar_curso(raiz, codigo_curso, "MEDICINA", 12); 
+        i++;
+    }
+}
+
+
+//2. busca de uma nota de uma disciplina de uma aluno
+
+//forma crescente
+
+//forma descrecente
+
+//forma aleatória
+
+//3. métricas de tempo
+
+//por inserção na árvore de cursos
+double tempomedio_insercao_cursos(Arv_Cursos **curso) {
+    clock_t inicio, fim;
+    double tempo_total = 0.0, tempo_medio = 0.0;
+
+    int i;
+
+    for (i = 0; i < LOOP; i++) {
+        int codigo_curso = rand() % CODIGOCURSO + 1;  
+        const char *nome_curso = "MEDICINA"; 
+        int quantidade_periodos = (rand() % 9) + 4; 
+
+        inicio = clock();
+        cadastrar_curso(curso, codigo_curso, nome_curso, quantidade_periodos);
+        fim = clock();
+
+        tempo_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+        tempo_medio = tempo_total / LOOP;
+    }
+
+    return tempo_medio;
+}
+
+//por busca na árvore de notas
+
+//4. int main
