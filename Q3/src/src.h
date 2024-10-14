@@ -1,6 +1,17 @@
 #ifndef SRC_H
 #define SRC_H
 
+// -------------- Matriculas ----------------
+
+typedef struct matriculas_info {
+    int codigo_disciplina;
+} Matriculas_Info;
+
+typedef struct arv_matricula {
+    Matriculas_Info *info;
+    int altura;
+    struct arv_matricula *esq, *dir;
+} Arv_Matricula;
 
 // -------------- Disciplinas ----------------
 typedef struct disciplinas_info {
@@ -17,18 +28,6 @@ typedef struct arv_disciplina {
     int altura;
     struct arv_disciplina *esq, *dir;
 } Arv_Disciplina;
-
-// -------------- Matriculas ----------------
-
-typedef struct matriculas_info {
-    int codigo_disciplina;
-} Matriculas_Info;
-
-typedef struct arv_matricula {
-    Matriculas_Info *info;
-    int altura;
-    struct arv_matricula *esq, *dir;
-} Arv_Matricula;
 
 // -------------- Notas ----------------
 typedef struct notas_info {
@@ -102,13 +101,13 @@ void exibir_alunos(Alunos *lista);
 void consultar_historico(Alunos *aluno, Arv_Cursos *curso, int matricula);
 
 // ---------- Funções relacionadas a Matrículas ------------
-void cadastrar_matricula(Arv_Matricula **matricula, int codigo_disciplina);
+void cadastrar_matricula(Alunos **a, int codigo, int mat);
 void remover_matricula(Arv_Matricula **m, int cod);
 void exibir_matriculas(Arv_Matricula *r);
 int verificar_matriculas_alunos(Alunos *aluno, int codigo_disciplina);
 
 // ---------- Funções relacionadas a Notas ------------
-int cadastrar_nota(Alunos **a, int mat, int codigo, int semestre, float notafinal);
+int cadastrar_notas(Alunos **a, int mat, Notas_Info *n);
 void exibir_nota_aluno_disciplina(Alunos *a, Arv_Cursos *curso, int matricula, int codigo_disciplina);
 void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula);
 int notas_disciplina_periodo(Arv_Notas *n, int periodo);
@@ -130,5 +129,8 @@ void remover_no_com_dois_filhos(Arv_Matricula *atual);
 Alunos *buscar_aluno(Alunos *aluno, int matricula);
 void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado);
 
+
+// Teste
+void cadastrar_disciplina_no_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina, const char *nome_disciplina, int periodo, int carga_horaria);
 #endif
 
