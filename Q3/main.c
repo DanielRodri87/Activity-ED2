@@ -43,5 +43,21 @@ int main()
     printf("\n-----------\nExibir Alunos Matriculado:\n-----------\n");
     exibir_disciplinasporaluno(aluno, arv_curso, 2023);
 
+    Notas_Info *n = (Notas_Info*) malloc(sizeof(Notas_Info));
+    n->codigo_disciplina = 1;
+    n->semestre = 3;
+    n->nota_final = 6.6;
+
+    int saida = cadastrar_notas(&aluno, 2023, n);
+
+    if (saida) printf("Deu certo");
+
+    printf("\n-----------\nNota por período:\n-----------\n");
+    notas_disciplina_periodo_aluno(aluno, 3, 2023);
+
+    
+
+
+
     return 0;
 }

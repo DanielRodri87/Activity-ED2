@@ -536,6 +536,9 @@ void buscar_disciplina(Arv_Matricula *matricula, int cod, int *enc)
     }
 }
 
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
+// XIV - Permita remover uma disciplina da árvore de matrícula de um determinado aluno.
+// ---------------------------------------------------- XXXXXX -------------------------------------------------
 int e_folha_matricula(Arv_Matricula *matricula)
 {
     return (matricula->esq == NULL && matricula->dir == NULL);
@@ -599,7 +602,7 @@ void remover_matricula(Arv_Matricula **matricula, int codigo)
         else
             remover_matricula(&(*matricula)->dir, codigo);
     }
-    if (matricula != NULL)
+    if (*matricula != NULL)
     {
         balanceamento_matricula(matricula);
         atualizar_altura_matricula(*matricula);
@@ -875,143 +878,113 @@ void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricul
 // mesma.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-// // Função para verificar se há alunos matriculados em uma disciplina
-// int tem_alunos_matriculados(Arv_Matricula *matricula)
-// {
-//     return (matricula != NULL);
-// }
+int e_folha(Arv_Disciplina *disciplina)
+{
+    return (disciplina->esq == NULL && disciplina->dir == NULL);
+}
 
-// // Função para alocar um novo nó de disciplina
-// Arv_Disciplina *alocar_no_disciplina()
-// {
-//     Arv_Disciplina *novo = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+Arv_Disciplina *so_um_filho(Arv_Disciplina *disciplina)
+{
+    Arv_Disciplina *aux = NULL;
 
-//     if (novo != NULL)
-//     {
-//         novo->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
-//         if (novo->info == NULL)
-//         {
-//             printf("Erro ao alocar memória para as informações da disciplina.\n");
-//             free(novo);
-//             return NULL;
-//         }
-//         novo->esq = NULL;
-//         novo->dir = NULL;
-//         novo->altura = 1;
-//     }
-//     else
-//     {
-//         printf("Erro ao alocar memória para a disciplina.\n");
-//     }
+    if (disciplina->dir == NULL)
+        aux = disciplina->esq;
+    else if (disciplina->esq == NULL)
+        aux = disciplina->dir;
 
-//     return novo;
-// }
+    return (aux);
+}
 
-// // Função para atualizar a altura da árvore de disciplinas
-// void atualizar_altura_disciplina(Arv_Disciplina *disciplina)
-// {
-//     if (disciplina != NULL)
-//     {
-//         int altura_esq = altura_disciplinas(disciplina->esq);
-//         int altura_dir = altura_disciplinas(disciplina->dir);
-//         disciplina->altura = 1 + (altura_esq > altura_dir ? altura_esq : altura_dir);
-//     }
-// }
+Arv_Disciplina *menor_filho_esquerda(Arv_Disciplina *disciplina)
+{
+    Arv_Disciplina *aux = NULL;
 
-// // Função para calcular o fator de balanceamento da árvore de disciplinas
-// int fator_balanceamento_disciplina(Arv_Disciplina *disciplina)
-// {
-//     int fb = 0;
-//     if (disciplina != NULL)
-//     {
-//         fb = altura_disciplinas(disciplina->esq) - altura_disciplinas(disciplina->dir);
-//     }
-//     return fb;
-// }
+    if (disciplina != NULL)
+        aux = menor_filho_esquerda(disciplina->esq);
+    if (!aux)
+        aux = disciplina;
 
-// // Função para remover uma disciplina da árvore
-// void remover_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina)
-// {
-//     if (*disciplina == NULL)
-//     {
-//         printf("Erro: Disciplina não encontrada.\n");
-//     }
-//     else if (codigo_disciplina < (*disciplina)->info->codigo_disciplina)
-//     {
-//         remover_disciplina(&((*disciplina)->esq), codigo_disciplina);
-//     }
-//     else if (codigo_disciplina > (*disciplina)->info->codigo_disciplina)
-//     {
-//         remover_disciplina(&((*disciplina)->dir), codigo_disciplina);
-//     }
-//     else
-//     {
+    return (aux);
+}
 
-//         if (tem_alunos_matriculados((*disciplina)->info->mat))
-//         {
-//             printf("Erro: Não é possível remover a disciplina, pois há alunos matriculados.\n");
-//         }
-//         else
-//         {
+void remover_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina, int *remove)
+{
+    if ((*disciplina != NULL))
+    {
+        Arv_Disciplina *aux;
+        Arv_Disciplina *endereco_filho;
+        Arv_Disciplina *endereco_menor_filho;
+        if ((*disciplina)->codigo_disciplina == codigo_disciplina)
+        {
+            if (e_folha(*disciplina))
+            {
+                aux = *disciplina;
+                free(aux);
+                *disciplina = NULL;
+            }
+            else if ((endereco_filho = so_um_filho(*disciplina)) != NULL)
+            {
+                aux = *disciplina;
+                free(aux);
+                *disciplina = endereco_filho;
+            }
+            else
+            {
+                endereco_menor_filho = menor_filho_esquerda((*disciplina)->dir);
+                (*disciplina)->codigo_disciplina = endereco_menor_filho->codigo_disciplina;
+                (*disciplina)->carga_horaria = endereco_menor_filho->carga_horaria;
+                (*disciplina)->periodo = endereco_menor_filho->periodo;
+                strcpy((*disciplina)->nome_disciplina, endereco_menor_filho->nome_disciplina);
+                remover_disciplina(&(*disciplina)->dir, endereco_menor_filho->codigo_disciplina, remove);
+            }
+            *remove = 1;
+        }
+        else if (codigo_disciplina < (*disciplina)->codigo_disciplina)
+            remover_disciplina(&(*disciplina)->esq, codigo_disciplina, remove);
+        else
+            remover_disciplina(&(*disciplina)->dir, codigo_disciplina, remove);
+    }
+    if (*disciplina != NULL)
+    {
+        balanceamento_disciplina(disciplina);
+        atualizar_altura_disciplina(*disciplina);
+    }
+}
 
-//             Arv_Disciplina *temp = NULL;
-//             if ((*disciplina)->esq == NULL)
-//             {
-//                 temp = (*disciplina)->dir;
-//                 free((*disciplina)->info);
-//                 free(*disciplina);
-//                 *disciplina = temp;
-//             }
-//             else if ((*disciplina)->dir == NULL)
-//             {
-//                 temp = (*disciplina)->esq;
-//                 free((*disciplina)->info);
-//                 free(*disciplina);
-//                 *disciplina = temp;
-//             }
-//             else
-//             {
-//                 temp = (*disciplina)->dir;
-//                 while (temp->esq != NULL)
-//                 {
-//                     temp = temp->esq;
-//                 }
+void confirmar_remocao_disciplina(Alunos *alunos, int codigo_disciplina, int *confirmar)
+{
+    int enc = 0;
 
-//                 (*disciplina)->info->codigo_disciplina = temp->info->codigo_disciplina;
-//                 strcpy((*disciplina)->info->nome_disciplina, temp->info->nome_disciplina);
-//                 (*disciplina)->info->periodo = temp->info->periodo;
-//                 (*disciplina)->info->carga_horaria = temp->info->carga_horaria;
+    if (alunos != NULL)
+    {
+        buscar_matricula(alunos->mat, codigo_disciplina, &enc);
 
-//                 remover_disciplina(&((*disciplina)->dir), temp->info->codigo_disciplina);
-//             }
-//         }
-//     }
+        if (enc != 0)
+            *confirmar = 1;
 
-//     atualizar_altura_disciplina(*disciplina);
-//     balanceamento_disciplina(disciplina);
-// }
+        confirmar_remocao_disciplina(alunos->prox, codigo_disciplina, confirmar);
+    }
+}
 
-// // Função para remover uma disciplina de um curso
-// void remover_disciplina_do_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina)
-// {
-//     while (curso != NULL && curso->info->codigo_curso != codigo_curso)
-//     {
-//         curso = (codigo_curso < curso->info->codigo_curso) ? curso->esq : curso->dir;
-//     }
 
-//     if (curso == NULL)
-//     {
-//         printf("Erro: Curso não encontrado.\n");
-//         return;
-//     }
-
-//     remover_disciplina(&(curso->info->disciplina), codigo_disciplina);
-// }
-
-// ---------------------------------------------------- XXXXXX -------------------------------------------------
-// XIV - Permita remover uma disciplina da árvore de matrícula de um determinado aluno.
-// ---------------------------------------------------- XXXXXX -------------------------------------------------
-
+int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina)
+{
+    int remove = 0, confirmar_disciplina = 0;
+    if ((*cursos))
+    {
+        confirmar_remocao_disciplina(alunos, codigo_disciplina, &confirmar_disciplina);
+        if (confirmar_disciplina != 0)
+        {
+            if ((*cursos)->codigo_curso == idcurso)
+                remover_disciplina(&(*cursos)->disciplina, codigo_disciplina, &remove);
+            else if (idcurso < (*cursos)->codigo_curso)
+                remove = remover_disciplina_curso(&(*cursos)->esq, alunos, idcurso, codigo_disciplina);
+            else
+                remove = remover_disciplina_curso(&(*cursos)->dir, alunos, idcurso, codigo_disciplina);
+        }
+    }
+    return (remove);
+}
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XV - Mostrar o histórico de um determinado aluno, contendo o nome do curso, as disciplinas e sua respectiva
 // nota organizadas pelo período que a disciplina está cadastrada no curso.
