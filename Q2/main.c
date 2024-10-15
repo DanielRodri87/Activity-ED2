@@ -6,11 +6,12 @@
 
 #define QUANTIDADECURSOS 2000
 #define CODIGOCURSO 2000
-#define LOOP 15000
+#define LOOP 2000
 #define QUANTIDADEDISCIPLINAS 2000
 #define QUANTIDADEALUNOS 2000
+#define QUANTIDADENOTAS 2000
 
-
+// --------------------------------------  POVOAMENTO CURSOS ---------------------------------
 
 // 1. inserção de cada elemento na árvore de cursos
 
@@ -44,30 +45,11 @@ void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
     }
 }
 
+// -----------------------------------  POVOAMENTO DISCIPLINAS -------------------------------
+
 // 2. busca de uma nota de uma disciplina de uma aluno
 
-// forma crescente
-void povoamentocrescente_disciplinas(Arv_Cursos **raiz)
-{
-    if (*raiz != NULL)
-    {
-        int codigo_curso_atual = (*raiz)->codigo_curso;
-
-        for (int i = 1; i < QUANTIDADEDISCIPLINAS; i++)
-        {
-            Arv_Disciplina *disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            strcpy(disciplina->nome_disciplina, "Anatomia");
-            disciplina->carga_horaria = 90;
-            disciplina->periodo = 1;
-            disciplina->codigo_disciplina = i;
-
-            cadastrar_disciplina(raiz, disciplina, codigo_curso_atual);
-        }
-
-        povoamentocrescente_disciplinas(&(*raiz)->esq);
-        povoamentocrescente_disciplinas(&(*raiz)->dir);
-    }
-}
+// -----------------------------------  POVOAMENTO MATRICULAS --------------------------------
 
 void povoamentocrescente_matriculas(Alunos *aluno)
 {
@@ -82,63 +64,6 @@ void povoamentocrescente_matriculas(Alunos *aluno)
         }
 
         povoamentocrescente_matriculas(aluno->prox);
-    }
-}
-
-void povoamentocrescente_notas(Alunos *aluno)
-{
-    if (aluno != NULL)
-    {
-        for (int i = 1; i < QUANTIDADECURSOS; i++)
-        {
-            int codigo_disciplina = i;
-            int semestre = 3;
-            float nota_final = (rand() % 10) + 1;
-            int matricula = aluno->matricula;
-
-            cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final);
-        }
-
-        povoamentocrescente_notas(aluno->prox);
-    }
-}
-
-void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
-{
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
-
-    for (int i = 1; i < QUANTIDADEALUNOS; i++)
-    {
-        int matricula = i;
-        char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
-
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-    }
-}
-
-// forma descrecente
-void povoamentodecrescente_disciplinas(Arv_Cursos **raiz)
-{
-    if (*raiz != NULL)
-    {
-        int codigo_curso_atual = (*raiz)->codigo_curso;
-
-        for (int i = QUANTIDADEDISCIPLINAS; i > 1; i--)
-        {
-            Arv_Disciplina *disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            strcpy(disciplina->nome_disciplina, "Anatomia");
-            disciplina->carga_horaria = 90;
-            disciplina->periodo = 1;
-            disciplina->codigo_disciplina = i;
-            disciplina->esq = NULL;
-            disciplina->dir = NULL;
-
-            cadastrar_disciplina(raiz, disciplina, codigo_curso_atual);
-        }
-
-        povoamentodecrescente_disciplinas(&(*raiz)->esq);
-        povoamentodecrescente_disciplinas(&(*raiz)->dir);
     }
 }
 
@@ -158,6 +83,54 @@ void povoamentodecrescente_matriculas(Alunos *aluno)
     }
 }
 
+void povoamentoaleatorio_matriculas(Alunos *aluno)
+{
+    if (aluno != NULL)
+    {
+        int i = 1, sucesso = 0;
+        while (i < QUANTIDADEDISCIPLINAS)
+        {
+            int codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
+            int numero_matricula = aluno->matricula;
+
+            cadastrar_matricula(&aluno, codigo_disciplina, numero_matricula);
+            i++;
+        }
+
+        povoamentoaleatorio_matriculas(aluno->prox);
+    }
+}
+
+// -------------------------------------  POVOAMENTO NOTAS -----------------------------------
+void povoamentocrescente_notas(Alunos *aluno)
+{
+    if (aluno != NULL)
+    {
+        for (int i = 1; i < QUANTIDADECURSOS; i++)
+        {
+            int codigo_disciplina = i;
+            int semestre = 3;
+            float nota_final = (rand() % 10) + 1;
+            // printf("Nota final: %.2f\n", nota_final);
+            int matricula = aluno->matricula;
+
+            cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final);
+        }
+
+        povoamentocrescente_notas(aluno->prox);
+    }
+}
+
+void exibir_notas(Arv_Notas *raiz)
+{
+    if (raiz != NULL)
+    {
+        printf("Nota final = %.2f", raiz->nota_final);
+        exibir_notas(raiz->esq);
+        exibir_notas(raiz->dir);
+    }
+}
+
 void povoamentodecrescente_notas(Alunos *aluno)
 {
     if (aluno != NULL)
@@ -173,63 +146,6 @@ void povoamentodecrescente_notas(Alunos *aluno)
         }
 
         povoamentodecrescente_notas(aluno->prox);
-    }
-}
-
-void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
-{
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
-
-    for (int i = QUANTIDADEALUNOS; i > 1; i--)
-    {
-        int matricula = i;
-        char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
-
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-    }
-}
-
-// forma aleatória
-void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
-{
-    if (*raiz != NULL)
-    {
-        int i = 1, sucesso = 0;
-        while (i < QUANTIDADEDISCIPLINAS)
-        {
-            Arv_Disciplina *disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            strcpy(disciplina->nome_disciplina, "Anatomia");
-            disciplina->carga_horaria = 90;
-            disciplina->periodo = 1;
-            disciplina->codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
-            disciplina->esq = NULL;
-            disciplina->dir = NULL;
-
-            if (cadastrar_disciplina(raiz, disciplina, (*raiz)->codigo_curso) == 1)
-                i++;
-        }
-
-        povoar_disciplinas_aleatorio(&(*raiz)->esq);
-        povoar_disciplinas_aleatorio(&(*raiz)->dir);
-    }
-}
-
-void povoar_matriculas_aleatorio(Alunos *aluno)
-{
-    if (aluno != NULL)
-    {
-        int i = 1, sucesso = 0;
-        while (i < QUANTIDADEDISCIPLINAS)
-        {
-            int codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
-            int numero_matricula = aluno->matricula;
-
-            cadastrar_matricula(&aluno, codigo_disciplina, numero_matricula);
-            i++;
-        }
-
-        povoar_matriculas_aleatorio(aluno->prox);
     }
 }
 
@@ -253,19 +169,64 @@ void povoar_notas_aleatorio(Alunos *aluno)
     }
 }
 
-void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
+// -----------------------------------  POVOAMENTO DISCIPLINAS -------------------------------
+int codigo_disciplina_global_crescente = 1;
+void povoamentocrescente_disciplinas(Arv_Cursos **raiz)
 {
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
-    int i = 0;
-
-    while (i < QUANTIDADEALUNOS)
+    if (*raiz != NULL)
     {
-        int matricula = rand() % QUANTIDADEALUNOS;
-        char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        strcpy(d->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->carga_horaria = 60;
+        d->periodo = 3;
+        d->codigo_disciplina = codigo_disciplina_global_crescente++;
 
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-        i++;
+        cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso);
+
+        // Continua o povoamento nos subárvores
+        povoamentocrescente_disciplinas(&(*raiz)->esq);
+        povoamentocrescente_disciplinas(&(*raiz)->dir);
+    }
+}
+
+int codigo_disciplina_global_decrescente = QUANTIDADEDISCIPLINAS;
+
+void povoamentodecrescente_disciplinas(Arv_Cursos **raiz)
+{
+    if (*raiz != NULL)
+    {
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        strcpy(d->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->carga_horaria = 60;
+        d->periodo = 3;
+        d->codigo_disciplina = codigo_disciplina_global_decrescente--;
+
+        cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso);
+
+        povoamentodecrescente_disciplinas(&(*raiz)->esq);
+        povoamentodecrescente_disciplinas(&(*raiz)->dir);
+    }
+}
+
+void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
+{
+    if (*raiz != NULL)
+    {
+        srand(time(NULL));
+
+        for (int i = 1; i <= QUANTIDADEDISCIPLINAS; i++)
+        {
+            Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+            strcpy(d->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+            d->carga_horaria = (rand() % 5 + 2) * 15;
+            d->periodo = rand() % (*raiz)->quantidade_periodos + 1;
+            d->codigo_disciplina = rand() % 1000 + 1;
+
+            cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso);
+        }
+
+        povoar_disciplinas_aleatorio(&(*raiz)->esq);
+        povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
 }
 
@@ -340,10 +301,71 @@ void free_lista_alunos(Alunos *alunos)
     }
 }
 
+// -----------------------------------  POVOAMENTO ALUNOS --------------------------------
+
+void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+{
+    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+
+    for (int i = 1; i < QUANTIDADEALUNOS; i++)
+    {
+        int matricula = i;
+        char *nome = nomes[rand() % 5];
+        int codigo_curso = rand() % QUANTIDADECURSOS;
+
+        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
+    }
+}
+
+void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+{
+    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+
+    for (int i = QUANTIDADEALUNOS; i > 1; i--)
+    {
+        int matricula = i;
+        char *nome = nomes[rand() % 5];
+        int codigo_curso = rand() % QUANTIDADECURSOS;
+
+        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
+    }
+}
+
+void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
+{
+    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+    int i = 0;
+
+    while (i < QUANTIDADEALUNOS)
+    {
+        int matricula = rand() % QUANTIDADEALUNOS;
+        char *nome = nomes[rand() % 5];
+        int codigo_curso = rand() % QUANTIDADECURSOS;
+
+        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
+        i++;
+    }
+}
+
+void exibir_todos_alunos(Alunos *aluno) {
+    if (aluno != NULL) {
+        // Exibe informações do aluno atual
+        printf("Matrícula: %d\n", aluno->matricula);
+        printf("Nome: %s\n", aluno->nome);
+        printf("Código do Curso: %d\n", aluno->codigo_curso);
+        printf("----------------------------\n");
+
+        // Chama a função de forma recursiva para exibir os alunos à esquerda e à direita
+        exibir_todos_alunos(aluno->prox);
+    }
+}
+
+
 // 4. int main
 int main()
 {
     Arv_Cursos *raiz = NULL;
+    Arv_Notas *raiz_notas = NULL;
     Alunos *alunos = NULL;
     int opcao, codigo_curso;
 
@@ -364,7 +386,13 @@ int main()
         printf("10. Buscar nota de disciplina\n");
         printf("11. Calcular tempo médio de inserção de cursos\n");
         printf("12. Calcular tempo médio de busca de notas\n");
-        printf("13. Conferir insercao curso\n");
+        printf("13. Inserir Notas de Forma Crescente\n");
+        printf("14. Inserir Notas de Forma Decrescente\n");
+        printf("15. Inserir Notas de Forma Aleatória\n");
+        printf("16. Conferir insercao curso\n");
+        printf("17. Conferir insercao disciplina\n");
+        printf("18. Conferir insercao alunos\n");
+        printf("19. Conferir insercao notas\n");
         printf("0. Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
@@ -436,6 +464,15 @@ int main()
             break;
         }
         case 13:
+            povoamentocrescente_notas(alunos);
+            break;
+        case 14:
+            povoamentodecrescente_notas(alunos);
+            break;
+        case 15:
+            povoar_notas_aleatorio(alunos);
+            break;
+        case 16:
             // Mostrar Cursos do Campus
             if (raiz == NULL)
             {
@@ -444,6 +481,21 @@ int main()
             }
             exibir_curso(raiz);
             break;
+
+        case 17:
+            int teste;
+            printf("Escolha o curso: ");
+            scanf("%d", &teste);
+            exibir_disciplinasporcurso(raiz, teste);
+            break;
+
+        case 18:
+            exibir_todos_alunos(alunos);
+
+            break;
+        
+        case 19:
+            exibir_notas(alunos->notas);
             break;
         case 0:
             printf("PROGRAMA FINALIZADO.\n");
