@@ -158,13 +158,10 @@ int main()
 
             saida = cadastrar_nota(&aluno, matricula, codigo_disciplina, quantidade_periodos, periodo);
             if (saida == 1)
-            {
                 printf("Nota cadastrada com sucesso e disciplina removida da árvore de matrículas.\n");
-            }
             else
-            {
                 printf("Erro: Não foi possível cadastrar a nota. Verifique se a disciplina está matriculada.\n");
-            }
+        
             break;
 
         case 6:
