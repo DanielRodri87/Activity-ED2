@@ -4,7 +4,7 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 20000
+#define QUANTIDADECURSOS 2000
 #define CODIGOCURSO 2000
 #define LOOP 2000
 #define QUANTIDADEDISCIPLINAS 2000
@@ -19,18 +19,17 @@
 
 void povoamentocrescente_cursos(Arv_Cursos **raiz)
 {
-    int i = 0;
-    for (i = 1; i <= QUANTIDADECURSOS; i++)
+    for (int i = 1; i <= QUANTIDADECURSOS; i++)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
 
 }
 
 void povoamentodescrecente_cursos(Arv_Cursos **raiz)
 {
-    int i = 0;
-    for (i = QUANTIDADECURSOS; i > 0; i--)
+    for (int i = QUANTIDADECURSOS; i >= 1; i--)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
 }
+
 
 // forma aleatória
 void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
