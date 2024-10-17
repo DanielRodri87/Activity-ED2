@@ -4,7 +4,7 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 2000
+#define QUANTIDADECURSOS 20000
 #define CODIGOCURSO 2000
 #define LOOP 2000
 #define QUANTIDADEDISCIPLINAS 2000
@@ -16,21 +16,20 @@
 // 1. inserção de cada elemento na árvore de cursos
 
 // forma crescente
+
 void povoamentocrescente_cursos(Arv_Cursos **raiz)
 {
-    for (int i = 1; i <= QUANTIDADECURSOS; i++)
-    {
+    int i = 0;
+    for (i = 1; i <= QUANTIDADECURSOS; i++)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
-    }
+
 }
 
-// forma descrecente
 void povoamentodescrecente_cursos(Arv_Cursos **raiz)
 {
-    for (int i = QUANTIDADECURSOS; i > 0; i--)
-    {
+    int i = 0;
+    for (i = QUANTIDADECURSOS; i > 0; i--)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
-    }
 }
 
 // forma aleatória
@@ -114,6 +113,8 @@ void povoamentocrescente_notas(Alunos *aluno)
             // printf("Nota final: %.2f\n", nota_final);
             int matricula = aluno->matricula;
 
+            cadastrar_matricula(&aluno, codigo_disciplina, matricula);
+
             cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final);
         }
 
@@ -142,6 +143,8 @@ void povoamentodecrescente_notas(Alunos *aluno)
             float nota_final = (rand() % 10) + 1;
             int matricula = aluno->matricula;
 
+            cadastrar_matricula(&aluno, codigo_disciplina, matricula);
+
             cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final);
         }
 
@@ -160,6 +163,8 @@ void povoar_notas_aleatorio(Alunos *aluno)
             int semestre = 3;
             float nota_final = (rand() % 10) + 1;
             int matricula = aluno->matricula;
+
+            cadastrar_matricula(&aluno, codigo_disciplina, matricula);
 
             if (cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final) == 1)
                 i++;
@@ -347,21 +352,19 @@ void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
     }
 }
 
-void exibir_todos_alunos(Alunos *aluno) {
-    if (aluno != NULL) {
-        // Exibe informações do aluno atual
+void exibir_todos_alunos(Alunos *aluno)
+{
+    if (aluno != NULL)
+    {
         printf("Matrícula: %d\n", aluno->matricula);
         printf("Nome: %s\n", aluno->nome);
         printf("Código do Curso: %d\n", aluno->codigo_curso);
         printf("----------------------------\n");
 
-        // Chama a função de forma recursiva para exibir os alunos à esquerda e à direita
         exibir_todos_alunos(aluno->prox);
     }
 }
 
-
-// 4. int main
 int main()
 {
     Arv_Cursos *raiz = NULL;
@@ -400,14 +403,17 @@ int main()
         switch (opcao)
         {
         case 1:
+            free_arvore_cursos(raiz);
             povoamentocrescente_cursos(&raiz);
             printf("Cursos inseridos em ordem crescente.\n");
             break;
         case 2:
+            free_arvore_cursos(raiz);
             povoamentodescrecente_cursos(&raiz);
             printf("Cursos inseridos em ordem decrescente.\n");
             break;
         case 3:
+            free_arvore_cursos(raiz);
             povoamentoaleatorio_cursos(&raiz);
             printf("Cursos inseridos de forma aleatória.\n");
             break;

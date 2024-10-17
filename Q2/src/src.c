@@ -438,25 +438,20 @@ void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula)
 
 void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricula, int codigo_disciplina)
 {
-    printf("entrou na merda da funcao\n");
     if (aluno != NULL)
     {
-        printf("if 1\n");
         if (aluno->matricula == matricula)
         {
-            printf("if 2\n");
 
             Arv_Notas *nota = aluno->notas;
             while (nota != NULL)
             {
                 if (nota->codigo_disciplina == codigo_disciplina)
                 {
-                    printf("if 3\n");
 
                     Arv_Disciplina *disciplina = curso->disciplina;
                     while (disciplina != NULL)
                     {
-                        printf("Todas as notas: %.2f\n", nota->nota_final);
                         if (disciplina->codigo_disciplina == codigo_disciplina)
                             printf("Aluno: %s\nDisciplina: %d\nPeriodo: %d\nCH: %d\nNota Final: %.2f\n",
                                    aluno->nome, nota->codigo_disciplina, disciplina->periodo, disciplina->carga_horaria, nota->nota_final);
