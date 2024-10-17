@@ -4,12 +4,12 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 2000
-#define CODIGOCURSO 2000
-#define LOOP 2000
-#define QUANTIDADEDISCIPLINAS 2000
-#define QUANTIDADEALUNOS 2000
-#define QUANTIDADENOTAS 2000
+#define QUANTIDADECURSOS 3000
+#define CODIGOCURSO 3000
+#define LOOP 3000
+#define QUANTIDADEDISCIPLINAS 3000
+#define QUANTIDADEALUNOS 3000
+#define QUANTIDADENOTAS 3000
 
 // --------------------------------------  POVOAMENTO CURSOS ---------------------------------
 
@@ -19,6 +19,7 @@
 
 void povoamentocrescente_cursos(Arv_Cursos **raiz)
 {
+    *raiz = NULL;
     for (int i = 1; i <= QUANTIDADECURSOS; i++)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
 
@@ -26,6 +27,8 @@ void povoamentocrescente_cursos(Arv_Cursos **raiz)
 
 void povoamentodescrecente_cursos(Arv_Cursos **raiz)
 {
+    *raiz = NULL;
+
     for (int i = QUANTIDADECURSOS; i >= 1; i--)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
 }
@@ -34,6 +37,8 @@ void povoamentodescrecente_cursos(Arv_Cursos **raiz)
 // forma aleatória
 void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
 {
+    *raiz = NULL;
+
     int i = 1;
     while (i <= QUANTIDADECURSOS)
     {
@@ -237,6 +242,27 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 // 3. métricas de tempo
 
 // por inserção na árvore de cursos
+
+void free_arvore_cursos(Arv_Cursos *raiz)
+{
+    if (raiz != NULL)
+    {
+        free_arvore_cursos(raiz->esq);
+        free_arvore_cursos(raiz->dir);
+        free(raiz);
+    }
+}
+
+void free_lista_alunos(Alunos *alunos)
+{
+    Alunos *temp;
+    while (alunos != NULL)
+    {
+        temp = alunos;
+        alunos = alunos->prox;
+        free(temp);
+    }
+}
 double tempomedio_insercao_cursos(Arv_Cursos **curso)
 {
     clock_t inicio, fim;
@@ -257,6 +283,7 @@ double tempomedio_insercao_cursos(Arv_Cursos **curso)
         tempo_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
         tempomedio_insercao = tempo_total / LOOP;
     }
+
 
     return tempomedio_insercao;
 }
@@ -283,27 +310,7 @@ double tempomedio_busca(Alunos *alunos, Arv_Cursos *raiz, int matricula, int cod
     return tempomedio_busca;
 }
 
-// funções free
-void free_arvore_cursos(Arv_Cursos *raiz)
-{
-    if (raiz != NULL)
-    {
-        free_arvore_cursos(raiz->esq);
-        free_arvore_cursos(raiz->dir);
-        free(raiz);
-    }
-}
 
-void free_lista_alunos(Alunos *alunos)
-{
-    Alunos *temp;
-    while (alunos != NULL)
-    {
-        temp = alunos;
-        alunos = alunos->prox;
-        free(temp);
-    }
-}
 
 // -----------------------------------  POVOAMENTO ALUNOS --------------------------------
 
@@ -369,7 +376,9 @@ int main()
     Arv_Cursos *raiz = NULL;
     Arv_Notas *raiz_notas = NULL;
     Alunos *alunos = NULL;
-    int opcao, codigo_curso;
+    int opcao, codigo_curso, matricula, codigo_disciplina;
+
+    double tempo;
 
     srand(time(NULL));
 
@@ -402,17 +411,14 @@ int main()
         switch (opcao)
         {
         case 1:
-            free_arvore_cursos(raiz);
             povoamentocrescente_cursos(&raiz);
             printf("Cursos inseridos em ordem crescente.\n");
             break;
         case 2:
-            free_arvore_cursos(raiz);
             povoamentodescrecente_cursos(&raiz);
             printf("Cursos inseridos em ordem decrescente.\n");
             break;
         case 3:
-            free_arvore_cursos(raiz);
             povoamentoaleatorio_cursos(&raiz);
             printf("Cursos inseridos de forma aleatória.\n");
             break;
@@ -441,33 +447,27 @@ int main()
             printf("Alunos inseridos de forma aleatória.\n");
             break;
         case 10:
-        {
-            int matricula, codigo_disciplina;
+            matricula, codigo_disciplina;
             printf("Informe a matrícula do aluno: ");
             scanf("%d", &matricula);
             printf("Informe o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
-            double tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
+            tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
             printf("Tempo médio de busca: %.6f segundos\n", tempo);
             break;
-        }
         case 11:
-        {
-            double tempo = tempomedio_insercao_cursos(&raiz);
+            tempo = tempomedio_insercao_cursos(&raiz);
             printf("Tempo médio de inserção de cursos: %.6f segundos\n", tempo);
             break;
-        }
         case 12:
-        {
             int matricula, codigo_disciplina;
             printf("Informe a matrícula do aluno: ");
             scanf("%d", &matricula);
             printf("Informe o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
-            double tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
+            tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
             printf("Tempo médio de busca de notas: %.6f segundos\n", tempo);
             break;
-        }
         case 13:
             povoamentocrescente_notas(alunos);
             break;
@@ -478,7 +478,6 @@ int main()
             povoar_notas_aleatorio(alunos);
             break;
         case 16:
-            // Mostrar Cursos do Campus
             if (raiz == NULL)
             {
                 printf("Erro: Nenhum curso cadastrado.\n");
@@ -496,12 +495,12 @@ int main()
 
         case 18:
             exibir_todos_alunos(alunos);
-
             break;
         
         case 19:
             exibir_notas(alunos->notas);
             break;
+            
         case 0:
             printf("PROGRAMA FINALIZADO.\n");
             break;
