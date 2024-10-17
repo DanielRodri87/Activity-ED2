@@ -442,13 +442,11 @@ void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricul
     {
         if (aluno->matricula == matricula)
         {
-
             Arv_Notas *nota = aluno->notas;
             while (nota != NULL)
             {
                 if (nota->codigo_disciplina == codigo_disciplina)
                 {
-
                     Arv_Disciplina *disciplina = curso->disciplina;
                     while (disciplina != NULL)
                     {

@@ -67,6 +67,7 @@ int main()
             break;
 
         case 2:
+        
             // Cadastrar Curso
             printf("Informe o código do curso: ");
             scanf("%d", &codigo_curso);

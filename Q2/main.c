@@ -4,12 +4,12 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 3000
-#define CODIGOCURSO 3000
-#define LOOP 3000
-#define QUANTIDADEDISCIPLINAS 3000
-#define QUANTIDADEALUNOS 3000
-#define QUANTIDADENOTAS 3000
+#define QUANTIDADECURSOS 1000
+#define CODIGOCURSO 1000
+#define LOOP 1000
+#define QUANTIDADEDISCIPLINAS 1000
+#define QUANTIDADEALUNOS 1000
+#define QUANTIDADENOTAS 1000
 
 // --------------------------------------  POVOAMENTO CURSOS ---------------------------------
 
@@ -376,138 +376,228 @@ int main()
     Arv_Cursos *raiz = NULL;
     Arv_Notas *raiz_notas = NULL;
     Alunos *alunos = NULL;
-    int opcao, codigo_curso, matricula, codigo_disciplina;
-
+    int opcao_principal, opcao_submenu, codigo_curso, matricula, codigo_disciplina;
     double tempo;
 
     srand(time(NULL));
 
     do
     {
-        printf("\nMenu:\n");
-        printf("1. Inserir cursos em ordem crescente\n");
-        printf("2. Inserir cursos em ordem decrescente\n");
-        printf("3. Inserir cursos de forma aleatória\n");
-        printf("4. Inserir disciplinas em ordem crescente\n");
-        printf("5. Inserir disciplinas em ordem decrescente\n");
-        printf("6. Inserir disciplinas de forma aleatória\n");
-        printf("7. Inserir alunos em ordem crescente\n");
-        printf("8. Inserir alunos em ordem decrescente\n");
-        printf("9. Inserir alunos de forma aleatória\n");
-        printf("10. Buscar nota de disciplina\n");
-        printf("11. Calcular tempo médio de inserção de cursos\n");
-        printf("12. Calcular tempo médio de busca de notas\n");
-        printf("13. Inserir Notas de Forma Crescente\n");
-        printf("14. Inserir Notas de Forma Decrescente\n");
-        printf("15. Inserir Notas de Forma Aleatória\n");
-        printf("16. Conferir insercao curso\n");
-        printf("17. Conferir insercao disciplina\n");
-        printf("18. Conferir insercao alunos\n");
-        printf("19. Conferir insercao notas\n");
+        printf("\nMenu Principal:\n");
+        printf("1. Curso\n");
+        printf("2. Disciplina\n");
+        printf("3. Aluno\n");
+        printf("4. Nota\n");
+        printf("5. Busca\n");
+        printf("6. Testes\n");
         printf("0. Sair\n");
         printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
+        scanf("%d", &opcao_principal);
 
-        switch (opcao)
+        switch (opcao_principal)
         {
-        case 1:
-            povoamentocrescente_cursos(&raiz);
-            printf("Cursos inseridos em ordem crescente.\n");
-            break;
-        case 2:
-            povoamentodescrecente_cursos(&raiz);
-            printf("Cursos inseridos em ordem decrescente.\n");
-            break;
-        case 3:
-            povoamentoaleatorio_cursos(&raiz);
-            printf("Cursos inseridos de forma aleatória.\n");
-            break;
-        case 4:
-            povoamentocrescente_disciplinas(&raiz);
-            printf("Disciplinas inseridas em ordem crescente.\n");
-            break;
-        case 5:
-            povoamentodecrescente_disciplinas(&raiz);
-            printf("Disciplinas inseridas em ordem decrescente.\n");
-            break;
-        case 6:
-            povoar_disciplinas_aleatorio(&raiz);
-            printf("Disciplinas inseridas de forma aleatória.\n");
-            break;
-        case 7:
-            povoamentocrescente_alunos(&alunos, raiz);
-            printf("Alunos inseridos em ordem crescente.\n");
-            break;
-        case 8:
-            povoamentodecrescente_alunos(&alunos, raiz);
-            printf("Alunos inseridos em ordem decrescente.\n");
-            break;
-        case 9:
-            povoar_alunos_aleatorio(&alunos, raiz);
-            printf("Alunos inseridos de forma aleatória.\n");
-            break;
-        case 10:
-            matricula, codigo_disciplina;
-            printf("Informe a matrícula do aluno: ");
-            scanf("%d", &matricula);
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
-            printf("Tempo médio de busca: %.6f segundos\n", tempo);
-            break;
-        case 11:
-            tempo = tempomedio_insercao_cursos(&raiz);
-            printf("Tempo médio de inserção de cursos: %.6f segundos\n", tempo);
-            break;
-        case 12:
-            int matricula, codigo_disciplina;
-            printf("Informe a matrícula do aluno: ");
-            scanf("%d", &matricula);
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
-            printf("Tempo médio de busca de notas: %.6f segundos\n", tempo);
-            break;
-        case 13:
-            povoamentocrescente_notas(alunos);
-            break;
-        case 14:
-            povoamentodecrescente_notas(alunos);
-            break;
-        case 15:
-            povoar_notas_aleatorio(alunos);
-            break;
-        case 16:
-            if (raiz == NULL)
+        case 1: // Menu Curso
+            printf("\nMenu Curso:\n");
+            printf("1. Inserir cursos em ordem crescente\n");
+            printf("2. Inserir cursos em ordem decrescente\n");
+            printf("3. Inserir cursos de forma aleatória\n");
+            printf("4. Conferir inserção de cursos\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
             {
-                printf("Erro: Nenhum curso cadastrado.\n");
+            case 1:
+                povoamentocrescente_cursos(&raiz);
+                printf("Cursos inseridos em ordem crescente.\n");
                 break;
+            case 2:
+                povoamentodescrecente_cursos(&raiz);
+                printf("Cursos inseridos em ordem decrescente.\n");
+                break;
+            case 3:
+                povoamentoaleatorio_cursos(&raiz);
+                printf("Cursos inseridos de forma aleatória.\n");
+                break;
+            case 4:
+                if (raiz == NULL)
+                {
+                    printf("Erro: Nenhum curso cadastrado.\n");
+                }
+                else
+                {
+                    exibir_curso(raiz);
+                }
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
             }
-            exibir_curso(raiz);
             break;
 
-        case 17:
-            int teste;
-            printf("Escolha o curso: ");
-            scanf("%d", &teste);
-            exibir_disciplinasporcurso(raiz, teste);
+        case 2: // Menu Disciplina
+            printf("\nMenu Disciplina:\n");
+            printf("1. Inserir disciplinas em ordem crescente\n");
+            printf("2. Inserir disciplinas em ordem decrescente\n");
+            printf("3. Inserir disciplinas de forma aleatória\n");
+            printf("4. Conferir inserção de disciplinas\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
+            {
+            case 1:
+                povoamentocrescente_disciplinas(&raiz);
+                printf("Disciplinas inseridas em ordem crescente.\n");
+                break;
+            case 2:
+                povoamentodecrescente_disciplinas(&raiz);
+                printf("Disciplinas inseridas em ordem decrescente.\n");
+                break;
+            case 3:
+                povoar_disciplinas_aleatorio(&raiz);
+                printf("Disciplinas inseridas de forma aleatória.\n");
+                break;
+            case 4:
+                printf("Escolha o curso: ");
+                scanf("%d", &codigo_curso);
+                exibir_disciplinasporcurso(raiz, codigo_curso);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+            }
             break;
 
-        case 18:
-            exibir_todos_alunos(alunos);
+        case 3: // Menu Aluno
+            printf("\nMenu Aluno:\n");
+            printf("1. Inserir alunos em ordem crescente\n");
+            printf("2. Inserir alunos em ordem decrescente\n");
+            printf("3. Inserir alunos de forma aleatória\n");
+            printf("4. Conferir inserção de alunos\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
+            {
+            case 1:
+                povoamentocrescente_alunos(&alunos, raiz);
+                printf("Alunos inseridos em ordem crescente.\n");
+                break;
+            case 2:
+                povoamentodecrescente_alunos(&alunos, raiz);
+                printf("Alunos inseridos em ordem decrescente.\n");
+                break;
+            case 3:
+                povoar_alunos_aleatorio(&alunos, raiz);
+                printf("Alunos inseridos de forma aleatória.\n");
+                break;
+            case 4:
+                exibir_todos_alunos(alunos);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+            }
             break;
-        
-        case 19:
-            exibir_notas(alunos->notas);
+
+        case 4: // Menu Nota
+            printf("\nMenu Nota:\n");
+            printf("1. Inserir notas em ordem crescente\n");
+            printf("2. Inserir notas em ordem decrescente\n");
+            printf("3. Inserir notas de forma aleatória\n");
+            printf("4. Conferir inserção de notas\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
+            {
+            case 1:
+                povoamentocrescente_notas(alunos);
+                break;
+            case 2:
+                povoamentodecrescente_notas(alunos);
+                break;
+            case 3:
+                povoar_notas_aleatorio(alunos);
+                break;
+            case 4:
+                exibir_notas(alunos->notas);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+            }
             break;
-            
+
+        case 5: // Menu Busca
+            printf("\nMenu Busca:\n");
+            printf("1. Buscar nota de disciplina\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
+            {
+            case 1:
+                printf("Informe a matrícula do aluno: ");
+                scanf("%d", &matricula);
+                printf("Informe o código da disciplina: ");
+                scanf("%d", &codigo_disciplina);
+                tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
+                printf("Tempo médio de busca de notas: %.6f segundos\n", tempo);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+            }
+            break;
+
+        case 6: // Menu Testes
+            printf("\nMenu Testes:\n");
+            printf("1. Calcular tempo médio de inserção de cursos\n");
+            printf("2. Calcular tempo médio de busca de notas\n");
+            printf("0. Voltar\n");
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao_submenu);
+
+            switch (opcao_submenu)
+            {
+            case 1:
+                tempo = tempomedio_insercao_cursos(&raiz);
+                printf("Tempo médio de inserção de cursos: %.6f segundos\n", tempo);
+                break;
+            case 2:
+                printf("Informe a matrícula do aluno: ");
+                scanf("%d", &matricula);
+                printf("Informe o código da disciplina: ");
+                scanf("%d", &codigo_disciplina);
+                tempo = tempomedio_busca(alunos, raiz, matricula, codigo_disciplina);
+                printf("Tempo médio de busca de notas: %.6f segundos\n", tempo);
+                break;
+            case 0:
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+            }
+            break;
+
         case 0:
             printf("PROGRAMA FINALIZADO.\n");
             break;
         default:
             printf("Opção inválida! Tente novamente.\n");
         }
-    } while (opcao != 0);
+    } while (opcao_principal != 0);
 
     free_arvore_cursos(raiz);
     free_lista_alunos(alunos);

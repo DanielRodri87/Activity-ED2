@@ -19,7 +19,7 @@ typedef struct disciplinas_info {
     char nome_disciplina[100];
     int periodo;
     int carga_horaria;
-    Arv_Matricula *mat; //adicionei isso aqui
+    Arv_Matricula *mat; 
 
 } Disciplinas_Info;
 

@@ -45,6 +45,7 @@ typedef struct arv_cursos {
     Alunos *alunos;
 } Arv_Cursos;
 
+
 // ---------- Funções relacionadas a Cursos ------------
 void gerar_codigo_disc(int *codigo_disciplina);
 Arv_Cursos* buscar_curso(Arv_Cursos *curso, int codigo_curso);

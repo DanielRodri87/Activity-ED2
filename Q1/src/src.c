@@ -110,6 +110,7 @@ void inserir_disciplina(Arv_Disciplina **disciplina, Arv_Disciplina *No, int *in
         inserir_disciplina(&((*disciplina)->dir), No, insere);
 }
 
+
 int cadastrar_disciplina(Arv_Cursos **curso, Arv_Disciplina *No, int codigo_curso)
 {
     int validar_h = 0, validar_p = 0, sucesso = 0;
