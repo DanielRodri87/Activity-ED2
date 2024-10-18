@@ -4,12 +4,12 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 1000
-#define CODIGOCURSO 1000
-#define LOOP 1000
-#define QUANTIDADEDISCIPLINAS 1000
-#define QUANTIDADEALUNOS 1000
-#define QUANTIDADENOTAS 1000
+#define QUANTIDADECURSOS 100000
+#define CODIGOCURSO 100000
+#define LOOP 100000
+#define QUANTIDADEDISCIPLINAS 100000
+#define QUANTIDADEALUNOS 100000
+#define QUANTIDADENOTAS 100000
 
 // --------------------------------------  POVOAMENTO CURSOS ---------------------------------
 
@@ -130,7 +130,7 @@ void exibir_notas(Arv_Notas *raiz)
 {
     if (raiz != NULL)
     {
-        printf("Nota final = %.2f", raiz->nota_final);
+        printf("Nota final = %.2f\n", raiz->nota_final);
         exibir_notas(raiz->esq);
         exibir_notas(raiz->dir);
     }
@@ -301,6 +301,9 @@ double tempomedio_busca(Alunos *alunos, Arv_Cursos *raiz, int matricula, int cod
         exibir_nota_aluno_disciplina(alunos, raiz, matricula, codigo_disciplina);
 
         fim = clock();
+
+
+
 
         tempo_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
     }
