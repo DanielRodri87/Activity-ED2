@@ -89,7 +89,7 @@ FUNÇÕES QUE PRECISAM DE BALANCEAMENTO:
 // ---------- Funções relacionadas a Cursos ------------
 void gerar_codigo_disc(int *codigo_disciplina);
 Arv_Cursos* buscar_curso(Arv_Cursos *curso, int codigo_curso);
-void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
+int cadastrar_curso(Arv_Cursos **curso, Cursos_Info *info);
 void exibir_curso(Arv_Cursos *r);
 
 
@@ -115,7 +115,7 @@ void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo
 
 // ---------- Funções Referentes a Disciplina ------------
 void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
-void cadastrar_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina, const char *nome_disciplina, int periodo, int carga_horaria, int max_periodos);
+int cadastrar_disciplina(Arv_Cursos **curso, Disciplinas_Info *no, int codigo_curso);
 void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso);
 void remover_disciplina_do_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina);
 //int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina); (essa não existe)

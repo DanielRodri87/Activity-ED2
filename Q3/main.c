@@ -37,6 +37,7 @@ int main()
     Arv_Notas *arv_notas = NULL;
     Arv_Disciplina *arv_disciplina = NULL, *disc;
     Arv_Matricula *arv_matricula = NULL;
+    Cursos_Info *curso;
 
     int matricula, codigo_curso, quantidade_periodos, codigo_disciplina, entrada_mat, entrada_disc, saida, coddisc, input_semestre;
     float periodo, input_nota_final;
@@ -74,7 +75,20 @@ int main()
             scanf(" %[^\n]s", nome_curso); // Permite entrada com espaços
             printf("Informe a quantidade de períodos: ");
             scanf("%d", &quantidade_periodos);
-            cadastrar_curso(&arv_curso, codigo_curso, nome_curso, quantidade_periodos);
+
+            curso = (Cursos_Info *)malloc(sizeof(Cursos_Info));
+            curso->codigo_curso = codigo_curso;
+            strcpy(curso->nome_curso, nome_curso);
+            curso->quantidade_periodos = quantidade_periodos;
+            curso->disciplina = NULL;
+
+            saida = cadastrar_curso(&arv_curso, curso);
+
+            if (saida)
+                printf("Curso Cadastrado com sucesso\n");
+            else
+                printf("O curso não foi cadastrado\n");
+
             break;
 
         case 3:
@@ -84,36 +98,50 @@ int main()
                 break;
             }
 
+            Disciplinas_Info *disc_info;
+            disc_info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+            if (!disc_info)
+            {
+                printf("Erro ao alocar memória para disciplina.\n");
+                break;
+            }
+
+            // Coletar informações da disciplina
+            printf("Digite o nome da disciplina: ");
+            scanf(" %[^\n]s", disc_info->nome_disciplina); // Permite entrada com espaços
             printf("Digite o código do curso: ");
             scanf("%d", &codigo_curso);
+            printf("Digite a carga horaria da disciplina: ");
+            scanf("%d", &disc_info->carga_horaria);
+            printf("Digite o periodo da disciplina: ");
+            scanf("%d", &disc_info->periodo);
 
+            // Verificar se o curso existe
             Arv_Cursos *curso_encontrado = buscar_curso(arv_curso, codigo_curso);
             if (!curso_encontrado)
             {
                 printf("Erro: Curso não encontrado.\n");
+                free(disc_info);
                 break;
             }
 
-            printf("Digite o nome da disciplina: ");
-            char nome_disciplina[100];
-            scanf(" %[^\n]s", nome_disciplina);
-
-            printf("Digite a carga horaria da disciplina (30 a 90, múltiplo de 15): ");
-            int carga_horaria;
-            scanf("%d", &carga_horaria);
-
-            printf("Digite o período da disciplina: ");
-            scanf("%f", &periodo);
-
-            // Gerar código para a disciplina
+            // Gerar código da disciplina
             int coddisc;
             gerar_codigo_disc(&coddisc);
+            disc_info->codigo_disciplina = coddisc;
 
-            // Cadastrar disciplina no curso encontrado
-            cadastrar_disciplina(&(curso_encontrado->info->disciplina), coddisc, nome_disciplina, periodo, carga_horaria, curso_encontrado->info->quantidade_periodos);
-
-            printf("\nCódigo da disciplina gerado: %d\n", coddisc);
-            printf("\nDisciplina cadastrada com sucesso!\n");
+            // Cadastrar a disciplina
+            saida = cadastrar_disciplina(&curso_encontrado, disc_info, codigo_curso);
+            if (saida)
+            {
+                printf("\nCódigo da disciplina gerado: %d\n", coddisc);
+                printf("\nDisciplina cadastrada com sucesso!\n");
+            }
+            else
+            {
+                printf("Erro ao cadastrar disciplina.\n");
+                free(disc_info);
+            }
             break;
 
         case 4:
@@ -134,7 +162,7 @@ int main()
         case 5:
             // Cadastrar Nota
 
-            Notas_Info *n = (Notas_Info*) malloc(sizeof(Notas_Info));
+            Notas_Info *n = (Notas_Info *)malloc(sizeof(Notas_Info));
 
             if (aluno == NULL)
             {
@@ -246,29 +274,29 @@ int main()
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
-        // case 13:
-        //     // Remover Disciplina de Curso
-        //     if (arv_curso == NULL)
-        //     {
-        //         printf("Erro: Nenhum curso cadastrado.\n");
-        //         break;
-        //     }
-        //     printf("Digite o código do curso: ");
-        //     scanf("%d", &codigo_curso);
-        //     printf("Digite o código da disciplina a ser removida: ");
-        //     scanf("%d", &codigo_disciplina);
+            // case 13:
+            //     // Remover Disciplina de Curso
+            //     if (arv_curso == NULL)
+            //     {
+            //         printf("Erro: Nenhum curso cadastrado.\n");
+            //         break;
+            //     }
+            //     printf("Digite o código do curso: ");
+            //     scanf("%d", &codigo_curso);
+            //     printf("Digite o código da disciplina a ser removida: ");
+            //     scanf("%d", &codigo_disciplina);
 
-        //     saida = remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
+            //     saida = remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
 
-        //     if (saida)
-        //     {
-        //         printf("Disciplina removida com sucesso do curso.\n");
-        //     }
-        //     else
-        //     {
-        //         printf("Erro: Não foi possível remover a disciplina. Verifique se o curso e a disciplina estão cadastrados.\n");
-        //     }
-        //     break;
+            //     if (saida)
+            //     {
+            //         printf("Disciplina removida com sucesso do curso.\n");
+            //     }
+            //     else
+            //     {
+            //         printf("Erro: Não foi possível remover a disciplina. Verifique se o curso e a disciplina estão cadastrados.\n");
+            //     }
+            //     break;
 
         case 14:
             // Remover Disciplina da Matrícula
