@@ -4,11 +4,11 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 5
-#define CODIGOCURSO 5
-#define QUANTIDADEDISCIPLINAS 5
-#define QUANTIDADEALUNOS 5
-#define QUANTIDADENOTAS 5
+#define QUANTIDADECURSOS 2000
+#define CODIGOCURSO 2000
+#define QUANTIDADEDISCIPLINAS 2000
+#define QUANTIDADEALUNOS 2000
+#define QUANTIDADENOTAS 2000
 
 double tempos_insercao_crescente[QUANTIDADECURSOS];
 double tempos_insercao_decrescente[QUANTIDADECURSOS];
@@ -158,34 +158,31 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 {
     if (*raiz != NULL)
     {
-        srand(time(NULL));
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        if (d == NULL)
+            printf("Erro ao alocar memória para disciplina.\n");
 
-        for (int i = 1; i <= QUANTIDADEDISCIPLINAS; i++)
+        d->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (d->info == NULL)
         {
-            Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            if (d == NULL)
-                printf("Erro ao alocar memória para disciplina.\n");
-            
-
-            d->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
-            if (d->info == NULL)
-            {
-                printf("Erro ao alocar memória para info da disciplina.\n");
-                free(d);  
-            }
-
-            strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
-            d->info->carga_horaria = (rand() % 5 + 2) * 15;
-            d->info->periodo = rand() % (*raiz)->info->quantidade_periodos + 1;
-            d->info->codigo_disciplina = rand() % 1000 + 1;
-
-            cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso);
+            printf("Erro ao alocar memória para info da disciplina.\n");
+            free(d);  
         }
+
+        strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->info->carga_horaria = (rand() % 5 + 2) * 15;
+        d->info->periodo = rand() % (*raiz)->info->quantidade_periodos + 1;
+
+        d->info->codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
+
+        if (cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso) == 1)
+            cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso);
 
         povoar_disciplinas_aleatorio(&(*raiz)->esq);
         povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
 }
+
 
 // --------------------------------------  POVOAMENTO ALUNOS ---------------------------------
 void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
@@ -222,12 +219,12 @@ void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
 
     while (i < QUANTIDADEALUNOS)
     {
-        int matricula = rand() % QUANTIDADEALUNOS;
+        int matricula = (rand() % QUANTIDADEALUNOS) + 1;
         char *nome = nomes[rand() % 5];
         int codigo_curso = i+1;
 
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-        i++;
+        if (cadastrar_aluno(aluno, matricula, nome, codigo_curso) == 1)
+            i++;
     }
 }
 
@@ -278,7 +275,8 @@ void exibir_notas(Arv_Notas *raiz)
 {
     if (raiz != NULL)
     {
-        printf("Nota final = %.2f", raiz->info->nota_final);
+        printf("Disciplina: %d\n", raiz->info->codigo_disciplina);
+        printf("Nota final = %.2f\n", raiz->info->nota_final);
         exibir_notas(raiz->esq);
         exibir_notas(raiz->dir);
     }
@@ -318,7 +316,7 @@ void povoar_notas_aleatorio(Alunos *aluno)
         int i = 1, sucesso = 0;
         while (i <= QUANTIDADECURSOS)
         {
-            int codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
+            int codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
             int semestre = 3;
             float nota_final = (rand() % 10) + 1;
             int matricula = aluno->matricula;

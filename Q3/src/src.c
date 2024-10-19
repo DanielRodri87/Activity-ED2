@@ -27,37 +27,70 @@ void converternome(char *nome)
     }
 }
 
-void cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
-{
-    Alunos *novo = (Alunos *)malloc(sizeof(Alunos));
-    novo->prox = NULL;
-    novo->matricula = mat;
-    char *aux_nome = strdup(nome);
-    converternome(aux_nome);
-    strcpy(novo->nome, aux_nome);
-    novo->codigo_curso = codigo_curso;
-    novo->notas = NULL;
-    novo->mat = NULL;
 
-    if (*aluno == NULL)
-        *aluno = novo;
-    else
+int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
+{
+    int resultado = 1;  // Variável de controle (1 = sucesso, 0 = aluno já existe, -1 = erro de alocação)
+    int existe = 0;     // Variável auxiliar para controlar se o aluno já existe
+
+    Alunos *aux = *aluno;
+    while (aux != NULL)
     {
-        if (strcmp(aux_nome, (*aluno)->nome) < 0)
+        if (aux->matricula == mat)
         {
-            novo->prox = *aluno;
-            *aluno = novo;
+            existe = 1;  // Aluno com a mesma matrícula encontrado
+            resultado = 0;  // Aluno já existe
+        }
+        aux = aux->prox;  // Continua a verificação para o próximo aluno
+    }
+
+    if (!existe)  // Apenas tenta inserir se a matrícula for única
+    {
+        // Alocar memória para o novo aluno
+        Alunos *novo = (Alunos *)malloc(sizeof(Alunos));
+        if (novo == NULL)
+        {
+            printf("Erro ao alocar memória para o novo aluno.\n");
+            resultado = -1;  // Erro de alocação
         }
         else
         {
-            Alunos *aux = *aluno;
-            while (aux->prox != NULL && strcmp(aux_nome, aux->prox->nome) > 0)
-                aux = aux->prox;
-            novo->prox = aux->prox;
-            aux->prox = novo;
+            novo->prox = NULL;
+            novo->matricula = mat;
+            char *aux_nome = strdup(nome);
+            converternome(aux_nome);  // Função para converter nome
+            strcpy(novo->nome, aux_nome);
+            novo->codigo_curso = codigo_curso;
+            novo->notas = NULL;
+            novo->mat = NULL;
+
+            if (*aluno == NULL) 
+                *aluno = novo;
+            else
+            {
+                if (strcmp(aux_nome, (*aluno)->nome) < 0)  // Inserir no início
+                {
+                    novo->prox = *aluno;
+                    *aluno = novo;
+                }
+                else  
+                {
+                    Alunos *aux = *aluno;
+                    while (aux->prox != NULL && strcmp(aux_nome, aux->prox->nome) > 0)
+                        aux = aux->prox;
+
+                    novo->prox = aux->prox;
+                    aux->prox = novo;
+                }
+            }
+
+            free(aux_nome);  // Liberar memória duplicada para o nome
         }
     }
+
+    return resultado;  // Retornar o valor final da variável de controle
 }
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // II - Cadastrar cursos a qualquer momento na árvore de curso, de forma que o usuário não precise cadastrar

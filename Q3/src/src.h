@@ -94,7 +94,7 @@ void exibir_curso(Arv_Cursos *r);
 
 
 // ---------- Funções relacionadas a Alunos ------------
-void cadastrar_aluno(Alunos **a, int mat, char *nome, int codigo_curso);
+int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso);
 void alunosporcurso(Alunos *a, int codigo_curso);
 Alunos* buscar_aluno_por_matricula_no_curso(Arv_Cursos *curso, int codigo_curso, int matricula);
 void exibir_alunos(Alunos *lista);
