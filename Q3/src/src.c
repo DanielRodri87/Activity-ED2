@@ -834,40 +834,70 @@ void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula)
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XII - Mostrar a nota de uma disciplina de um determinado aluno, mostrando o período e a carga horária da disciplina
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
+Arv_Disciplina *buscar_disciplina_xii(Arv_Disciplina *disciplina, int codigo_disciplina)
+{
+    Arv_Disciplina *resultado = NULL;
+    if (disciplina != NULL)
+    {
+        if (disciplina->info->codigo_disciplina == codigo_disciplina)
+            resultado = disciplina;
+        else if (codigo_disciplina < disciplina->info->codigo_disciplina)
+            resultado = buscar_disciplina_xii(disciplina->esq, codigo_disciplina);
+        else
+            resultado = buscar_disciplina_xii(disciplina->dir, codigo_disciplina);
+    }
+    return resultado;
+}
+
+Arv_Notas *buscar_nota_xii(Arv_Notas *nota, int codigo_disciplina)
+{
+    Arv_Notas *resultado = NULL;
+    if (nota != NULL)
+    {
+        if (nota->info->codigo_disciplina == codigo_disciplina)
+            resultado = nota;
+        else if (codigo_disciplina < nota->info->codigo_disciplina)
+        {
+            resultado = buscar_nota_xii(nota->esq, codigo_disciplina);
+        }
+        else
+        {
+            resultado = buscar_nota_xii(nota->dir, codigo_disciplina);
+        }
+    }
+    return resultado;
+}
+
 void exibir_nota_aluno_disciplina(Alunos *aluno, Arv_Cursos *curso, int matricula, int codigo_disciplina)
 {
+    Arv_Cursos *var_curso = NULL;
+    Arv_Disciplina *var_disc = NULL;
+    Arv_Notas *var_nota = NULL;
     if (aluno != NULL)
     {
         if (aluno->matricula == matricula)
         {
-            Arv_Notas *nota = aluno->notas;
-            while (nota != NULL)
+            var_curso = buscar_curso(curso, aluno->codigo_curso);
+            if (var_curso != NULL)
             {
-                if (nota->info->codigo_disciplina == codigo_disciplina)
+                var_disc = buscar_disciplina_xii(var_curso->info->disciplina, codigo_disciplina);
+                if (var_disc != NULL)
                 {
-                    Arv_Disciplina *disciplina = curso->info->disciplina;
-                    while (disciplina != NULL)
+                    var_nota = buscar_nota_xii(aluno->notas, codigo_disciplina);
+                    if (var_nota != NULL)
                     {
-                        if (disciplina->info->codigo_disciplina == codigo_disciplina)
-                            printf("Aluno: %s\nDisciplina: %d\nPeriodo: %d\nCH: %d\nNota Final: %.2f\n",
-                                   aluno->nome, nota->info->codigo_disciplina, disciplina->info->periodo, disciplina->info->carga_horaria, nota->info->nota_final);
-                        if (codigo_disciplina < disciplina->info->codigo_disciplina)
-                            disciplina = disciplina->esq;
-                        else
-                            disciplina = disciplina->dir;
+                        printf("Disciplina: %s\n", var_disc->info->nome_disciplina);
+                        printf("Nota: %.2f\n", var_nota->info->nota_final);
+                        printf("Periodo: %d\n", var_disc->info->periodo);
+                        printf("Carga horaria: %d\n", var_disc->info->carga_horaria);
                     }
                 }
-                if (codigo_disciplina < nota->info->codigo_disciplina)
-                    nota = nota->esq;
-                else
-                    nota = nota->dir;
             }
         }
         else
             exibir_nota_aluno_disciplina(aluno->prox, curso, matricula, codigo_disciplina);
     }
 }
-
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XIII - Remover uma disciplina de um determinado curso desde que não tenha nenhum aluno matriculado na
 // mesma.

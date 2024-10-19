@@ -67,6 +67,8 @@ void povoamentodescrecente_cursos(Arv_Cursos **raiz)
 
 }
 
+
+
 void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
 {
     *raiz = NULL;
@@ -76,9 +78,9 @@ void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
     {
         int codigo_curso = rand() % QUANTIDADECURSOS + 1;
         clock_t inicio = clock();
-        cadastrar_curso(raiz, codigo_curso, "MEDICINA", 12);
+        if (cadastrar_curso(raiz, codigo_curso, "MEDICINA", 12) == 1)
+            i++;
         clock_t fim = clock();
-        i++;
 
         tempos_insercao_aleatorio[i - 1] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     }
@@ -129,17 +131,15 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
     {
         srand(time(NULL));
 
-        for (int i = 1; i <= QUANTIDADEDISCIPLINAS; i++)
-        {
-            Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            strcpy(d->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
-            d->carga_horaria = (rand() % 5 + 2) * 15;
-            d->periodo = rand() % (*raiz)->quantidade_periodos + 1;
-            d->codigo_disciplina = rand() % 1000 + 1;
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        strcpy(d->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->carga_horaria = (rand() % 5 + 2) * 15;
+        d->periodo = rand() % (*raiz)->quantidade_periodos + 1;
+        d->codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
 
+        if (cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso) == 1);
             cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso);
-        }
-
+        
         povoar_disciplinas_aleatorio(&(*raiz)->esq);
         povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
@@ -149,13 +149,13 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 
 void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 {
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+    char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
 
-    for (int i = 1; i < QUANTIDADEALUNOS; i++)
+    for (int i = 1; i <= QUANTIDADEALUNOS; i++)
     {
         int matricula = i;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i;
 
         cadastrar_aluno(aluno, matricula, nome, codigo_curso);
     }
@@ -163,13 +163,13 @@ void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 
 void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 {
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+    char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
 
-    for (int i = QUANTIDADEALUNOS; i > 1; i--)
+    for (int i = QUANTIDADEALUNOS; i >= 1; i--)
     {
         int matricula = i;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i;
 
         cadastrar_aluno(aluno, matricula, nome, codigo_curso);
     }
@@ -177,17 +177,17 @@ void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 
 void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
 {
-    char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
+    char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
     int i = 0;
 
     while (i < QUANTIDADEALUNOS)
     {
-        int matricula = rand() % QUANTIDADEALUNOS;
+        int matricula = (rand() % QUANTIDADEALUNOS) + 1;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i+1;
 
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-        i++;
+        if (cadastrar_aluno(aluno, matricula, nome, codigo_curso) == 1)
+            i++;
     }
 }
 
@@ -209,7 +209,7 @@ void povoamentocrescente_notas(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        for (int i = 1; i < QUANTIDADECURSOS; i++)
+        for (int i = 1; i <= QUANTIDADECURSOS; i++)
         {
             int codigo_disciplina = i;
             int semestre = 3;
@@ -230,6 +230,7 @@ void exibir_notas(Arv_Notas *raiz)
 {
     if (raiz != NULL)
     {
+        printf("Disciplina: %d\n", raiz->codigo_disciplina);
         printf("Nota final = %.2f\n", raiz->nota_final);
         exibir_notas(raiz->esq);
         exibir_notas(raiz->dir);
@@ -240,7 +241,7 @@ void povoamentodecrescente_notas(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        for (int i = QUANTIDADECURSOS; i > 1; i--)
+        for (int i = QUANTIDADECURSOS; i >= 1; i--)
         {
             int codigo_disciplina = i;
             int semestre = 3;
@@ -260,18 +261,24 @@ void povoar_notas_aleatorio(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        int i = 1, sucesso = 0;
+        int i = 0;  // Contador de notas cadastradas
         while (i < QUANTIDADECURSOS)
         {
-            int codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
+            int codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
             int semestre = 3;
             float nota_final = (rand() % 10) + 1;
             int matricula = aluno->matricula;
 
-            cadastrar_matricula(&aluno, codigo_disciplina, matricula);
+            int enc_disc = 0;
+            auxiliar_validacao(aluno->notas, codigo_disciplina, &enc_disc);
 
-            if (cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final) == 1)
-                i++;
+            if (enc_disc == 0)  
+            {
+                cadastrar_matricula(&aluno, codigo_disciplina, matricula);
+
+                if (cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final) == 1)
+                    i++;  
+            }
         }
 
         povoar_notas_aleatorio(aluno->prox);
@@ -394,7 +401,10 @@ int main()
             scanf("%d", &matricula);
             printf("Informe o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
+            clock_t inicio = clock();
             exibir_nota_aluno_disciplina(alunos, raiz, matricula, codigo_disciplina);
+            clock_t fim = clock();
+            printf("O tempo para a busca foi de: %fs\n", ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000);
             break;
         case 5:
             relatorio_tempos_insercao();
