@@ -36,7 +36,6 @@ void free_lista_alunos(Alunos *alunos)
 }
 // --------------------------------------  POVOAMENTO CURSOS ---------------------------------
 
-
 void povoamentocrescente_cursos(Arv_Cursos **raiz)
 {
     *raiz = NULL;
@@ -46,9 +45,8 @@ void povoamentocrescente_cursos(Arv_Cursos **raiz)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
         clock_t fim = clock();
 
-        tempos_insercao_crescente[i-1] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
+        tempos_insercao_crescente[i - 1] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     }
-
 }
 
 void povoamentodescrecente_cursos(Arv_Cursos **raiz)
@@ -61,13 +59,9 @@ void povoamentodescrecente_cursos(Arv_Cursos **raiz)
         cadastrar_curso(raiz, i, "MEDICINA", 12);
         clock_t fim = clock();
 
-        tempos_insercao_decrescente[QUANTIDADECURSOS-i] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
+        tempos_insercao_decrescente[QUANTIDADECURSOS - i] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     }
-
-
 }
-
-
 
 void povoamentoaleatorio_cursos(Arv_Cursos **raiz)
 {
@@ -137,9 +131,9 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
         d->periodo = rand() % (*raiz)->quantidade_periodos + 1;
         d->codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
 
-        if (cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso) == 1);
+        if (cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso) == 1)
             cadastrar_disciplina(raiz, d, (*raiz)->codigo_curso);
-        
+
         povoar_disciplinas_aleatorio(&(*raiz)->esq);
         povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
@@ -184,7 +178,7 @@ void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
     {
         int matricula = (rand() % QUANTIDADEALUNOS) + 1;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = i+1;
+        int codigo_curso = i + 1;
 
         if (cadastrar_aluno(aluno, matricula, nome, codigo_curso) == 1)
             i++;
@@ -261,7 +255,7 @@ void povoar_notas_aleatorio(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        int i = 0;  // Contador de notas cadastradas
+        int i = 0; // Contador de notas cadastradas
         while (i < QUANTIDADECURSOS)
         {
             int codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
@@ -272,12 +266,12 @@ void povoar_notas_aleatorio(Alunos *aluno)
             int enc_disc = 0;
             auxiliar_validacao(aluno->notas, codigo_disciplina, &enc_disc);
 
-            if (enc_disc == 0)  
+            if (enc_disc == 0)
             {
                 cadastrar_matricula(&aluno, codigo_disciplina, matricula);
 
                 if (cadastrar_nota(&aluno, matricula, codigo_disciplina, semestre, nota_final) == 1)
-                    i++;  
+                    i++;
             }
         }
 
@@ -290,9 +284,8 @@ void povoar_notas_aleatorio(Alunos *aluno)
 void povoamentocrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
 {
     free_arvore_cursos(*raiz);
-    free_lista_alunos(*alunos);
-
     *raiz = NULL;
+    free_lista_alunos(*alunos);
     *alunos = NULL;
 
     povoamentocrescente_cursos(raiz);
@@ -303,10 +296,10 @@ void povoamentocrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
 
 void povoamentodecrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
 {
-    free_arvore_cursos(*raiz);
-    free_lista_alunos(*alunos);
 
-    *raiz = NULL;
+    free_arvore_cursos(*raiz);
+    *raiz = NULL; 
+    free_lista_alunos(*alunos);
     *alunos = NULL;
 
     povoamentodescrecente_cursos(raiz);
@@ -317,11 +310,9 @@ void povoamentodecrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
 
 void povoamentoaleatorio_completo(Arv_Cursos **raiz, Alunos **alunos)
 {
-
     free_arvore_cursos(*raiz);
+    *raiz = NULL; 
     free_lista_alunos(*alunos);
-
-    *raiz = NULL;
     *alunos = NULL;
 
     povoamentoaleatorio_cursos(raiz);
@@ -385,14 +376,20 @@ int main()
         switch (opcao_principal)
         {
         case 1:
+            raiz = NULL;
+            alunos = NULL;
             povoamentocrescente_completo(&raiz, &alunos);
             printf("Inserção crescente concluída!\n");
             break;
         case 2:
+            raiz = NULL;
+            alunos = NULL;
             povoamentodecrescente_completo(&raiz, &alunos);
             printf("Inserção decrescente concluída!\n");
             break;
         case 3:
+            raiz = NULL;
+            alunos = NULL;
             povoamentoaleatorio_completo(&raiz, &alunos);
             printf("Inserção aleatória concluída!\n");
             break;
