@@ -102,31 +102,26 @@ void povoamentocrescente_disciplinas(Arv_Cursos **raiz)
 {
     if (*raiz != NULL)
     {
-        Arv_Disciplina *variavel_disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-        if (variavel_disciplina == NULL)
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        if (d == NULL)
             printf("Erro ao alocar memória para disciplina.\n");
 
-        variavel_disciplina->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
-        if (variavel_disciplina->info == NULL)
+        d->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (d->info == NULL)
         {
-            printf("Erro ao alocar memória para informações da disciplina.\n");
-            free(variavel_disciplina);
+            printf("Erro ao alocar memória para info da disciplina.\n");
+            free(d);  
         }
 
-        strcpy(variavel_disciplina->info->nome_disciplina, "Algoritmos e Reprovacoes");
-        variavel_disciplina->info->carga_horaria = 60;
-        variavel_disciplina->info->periodo = 3;
-        variavel_disciplina->info->codigo_disciplina = codigo_disciplina_global_crescente++;
+        strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->info->carga_horaria = 60;
+        d->info->periodo = 3;
+        d->info->codigo_disciplina = codigo_disciplina_global_crescente++;
 
-        cadastrar_disciplina(raiz, variavel_disciplina->info, (*raiz)->info->codigo_curso);
+        cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso);
 
-        // Continua o povoamento nos subárvores
         povoamentocrescente_disciplinas(&(*raiz)->esq);
         povoamentocrescente_disciplinas(&(*raiz)->dir);
-
-        // Liberação de memória após uso
-        free(variavel_disciplina->info);
-        free(variavel_disciplina);
     }
 }
 
@@ -136,29 +131,26 @@ void povoamentodecrescente_disciplinas(Arv_Cursos **raiz)
 {
     if (*raiz != NULL)
     {
-        Arv_Disciplina *variavel_disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-        if (variavel_disciplina == NULL)
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        if (d == NULL)
             printf("Erro ao alocar memória para disciplina.\n");
 
-        variavel_disciplina->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
-        if (variavel_disciplina->info == NULL)
+        d->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (d->info == NULL)
         {
-            printf("Erro ao alocar memória para informações da disciplina.\n");
-            free(variavel_disciplina);
+            printf("Erro ao alocar memória para info da disciplina.\n");
+            free(d);  
         }
 
-        strcpy(variavel_disciplina->info->nome_disciplina, "Algoritmos e Reprovacoes");
-        variavel_disciplina->info->carga_horaria = 60;
-        variavel_disciplina->info->periodo = 3;
-        variavel_disciplina->info->codigo_disciplina = codigo_disciplina_global_decrescente--;
+        strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->info->carga_horaria = 60;
+        d->info->periodo = 3;
+        d->info->codigo_disciplina = codigo_disciplina_global_decrescente--;
 
-        cadastrar_disciplina(raiz, variavel_disciplina->info, (*raiz)->info->codigo_curso);
+        cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso);
 
         povoamentodecrescente_disciplinas(&(*raiz)->esq);
         povoamentodecrescente_disciplinas(&(*raiz)->dir);
-
-        free(variavel_disciplina->info);
-        free(variavel_disciplina);
     }
 }
 
@@ -166,48 +158,42 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 {
     if (*raiz != NULL)
     {
-        srand(time(NULL));
+        Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
+        if (d == NULL)
+            printf("Erro ao alocar memória para disciplina.\n");
 
-        for (int i = 1; i <= QUANTIDADEDISCIPLINAS; i++)
+        d->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
+        if (d->info == NULL)
         {
-            Arv_Disciplina *variavel_disciplina = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
-            if (variavel_disciplina == NULL)
-                printf("Erro ao alocar memória para disciplina.\n");
-
-            variavel_disciplina->info = (Disciplinas_Info *)malloc(sizeof(Disciplinas_Info));
-            if (variavel_disciplina->info == NULL)
-            {
-                printf("Erro ao alocar memória para informações da disciplina.\n");
-                free(variavel_disciplina);
-                return;
-            }
-
-            strcpy(variavel_disciplina->info->nome_disciplina, "Algoritmos e Reprovacoes");
-            variavel_disciplina->info->carga_horaria = (rand() % 5 + 2) * 15;
-            variavel_disciplina->info->periodo = rand() % (*raiz)->info->quantidade_periodos + 1;
-            variavel_disciplina->info->codigo_disciplina = rand() % 1000 + 1;
-
-            cadastrar_disciplina(raiz, variavel_disciplina->info, (*raiz)->info->codigo_curso);
-
-            free(variavel_disciplina->info);
-            free(variavel_disciplina);
+            printf("Erro ao alocar memória para info da disciplina.\n");
+            free(d);  
         }
+
+        strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
+        d->info->carga_horaria = (rand() % 5 + 2) * 15;
+        d->info->periodo = rand() % (*raiz)->info->quantidade_periodos + 1;
+
+        d->info->codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
+
+        if (cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso) == 1)
+            cadastrar_disciplina(raiz, d->info, (*raiz)->info->codigo_curso);
 
         povoar_disciplinas_aleatorio(&(*raiz)->esq);
         povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
 }
 
+
 // --------------------------------------  POVOAMENTO ALUNOS ---------------------------------
 void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 {
     char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
 
-    for (int i = 1; i < QUANTIDADEALUNOS; i++)
+    for (int i = 1; i <= QUANTIDADEALUNOS; i++)
     {
         int matricula = i;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i;
 
         cadastrar_aluno(aluno, matricula, nome, codigo_curso);
     }
@@ -217,11 +203,11 @@ void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
 {
     char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
 
-    for (int i = QUANTIDADEALUNOS; i > 1; i--)
+    for (int i = QUANTIDADEALUNOS; i >= 1; i--)
     {
         int matricula = i;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i;
 
         cadastrar_aluno(aluno, matricula, nome, codigo_curso);
     }
@@ -233,12 +219,12 @@ void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
 
     while (i < QUANTIDADEALUNOS)
     {
-        int matricula = rand() % QUANTIDADEALUNOS;
+        int matricula = (rand() % QUANTIDADEALUNOS) + 1;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = rand() % QUANTIDADECURSOS;
+        int codigo_curso = i+1;
 
-        cadastrar_aluno(aluno, matricula, nome, codigo_curso);
-        i++;
+        if (cadastrar_aluno(aluno, matricula, nome, codigo_curso) == 1)
+            i++;
     }
 }
 
@@ -261,7 +247,7 @@ void povoamentocrescente_notas(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        for (int i = 1; i < QUANTIDADECURSOS; i++)
+        for (int i = 1; i <= QUANTIDADECURSOS; i++)
         {
             int codigo_disciplina = i;
             int semestre = 3;
@@ -289,7 +275,8 @@ void exibir_notas(Arv_Notas *raiz)
 {
     if (raiz != NULL)
     {
-        printf("Nota final = %.2f", raiz->info->nota_final);
+        printf("Disciplina: %d\n", raiz->info->codigo_disciplina);
+        printf("Nota final = %.2f\n", raiz->info->nota_final);
         exibir_notas(raiz->esq);
         exibir_notas(raiz->dir);
     }
@@ -299,7 +286,7 @@ void povoamentodecrescente_notas(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        for (int i = QUANTIDADECURSOS; i > 1; i--)
+        for (int i = QUANTIDADECURSOS; i >= 1; i--)
         {
             int codigo_disciplina = i;
             int semestre = 3;
@@ -327,9 +314,9 @@ void povoar_notas_aleatorio(Alunos *aluno)
     if (aluno != NULL)
     {
         int i = 1, sucesso = 0;
-        while (i < QUANTIDADECURSOS)
+        while (i <= QUANTIDADECURSOS)
         {
-            int codigo_disciplina = rand() % QUANTIDADEDISCIPLINAS;
+            int codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
             int semestre = 3;
             float nota_final = (rand() % 10) + 1;
             int matricula = aluno->matricula;
@@ -467,7 +454,10 @@ int main()
             scanf("%d", &matricula);
             printf("Informe o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
+            clock_t inicio = clock();
             exibir_nota_aluno_disciplina(alunos, raiz, matricula, codigo_disciplina);
+            clock_t fim = clock();
+            printf("O tempo para a busca foi de: %fs\n", ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000);
             break;
         case 5:
             relatorio_tempos_insercao();

@@ -249,6 +249,8 @@ int main()
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
+            exibir_nota_aluno_disciplina(aluno, arv_curso, matricula, codigo_disciplina);
+            break;
         case 13:
             // Remover Disciplina de Curso
             if (arv_curso == NULL)

@@ -45,16 +45,15 @@ typedef struct arv_cursos {
     Alunos *alunos;
 } Arv_Cursos;
 
-
 // ---------- Funções relacionadas a Cursos ------------
 void gerar_codigo_disc(int *codigo_disciplina);
 Arv_Cursos* buscar_curso(Arv_Cursos *curso, int codigo_curso);
-void cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
+int cadastrar_curso(Arv_Cursos **curso, int codigo_curso, const char *nome_curso, int quantidade_periodos);
 void exibir_curso(Arv_Cursos *r);
 
 
 // ---------- Funções relacionadas a Alunos ------------
-void cadastrar_aluno(Alunos **a, int mat, char *nome, int codigo_curso);
+int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso);
 void alunosporcurso(Alunos *a, int codigo_curso);
 Alunos* buscar_aluno_por_matricula_no_curso(Arv_Cursos *curso, int codigo_curso, int matricula);
 void exibir_alunos(Alunos *lista);
@@ -88,7 +87,8 @@ void remover_no_com_um_filho(Arv_Matricula **raiz, Arv_Matricula *pai, Arv_Matri
 void remover_no_com_dois_filhos(Arv_Matricula *atual);
 Alunos *buscar_aluno(Alunos *aluno, int matricula);
 void buscar_matricula(Arv_Matricula *r, int codigo, int *encontrado);
-
+void auxiliar_validacao(Arv_Notas *notas, int codigo_disciplina, int *encontrado);
+Arv_Disciplina *buscar_disciplina_xii(Arv_Disciplina *disciplina, int codigo_disciplina);
 
 #endif
 
