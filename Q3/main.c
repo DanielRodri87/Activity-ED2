@@ -9,21 +9,21 @@ void menu_geral()
     printf("|--------------------- Menu Geral --------------------|\n");
     printf("|                      ----------                     |\n");
     printf("|                                                     |\n");
-    printf("|     1. Cadastrar Aluno (i)                          |\n");
-    printf("|     2. Cadastrar Curso (ii)                         |\n");
-    printf("|     3. Cadastrar Disciplina (iii)                   |\n");
-    printf("|     4. Cadastrar Matrícula (iv)                     |\n");
-    printf("|     5. Cadastrar Nota (v)                           |\n");
-    printf("|     6. Mostrar Alunos de um Curso (vi)              |\n");
-    printf("|     7. Mostrar Cursos do Campus (vii)               |\n");
-    printf("|     8. Mostrar Disciplinas de um Curso (viii)       |\n");
-    printf("|     9. Mostrar Disciplinas de um Período (ix)       |\n");
-    printf("|    10. Mostrar Disciplinas Matriculadas (x)         |\n");
-    printf("|    11. Mostrar Notas por Período (xi)               |\n");
-    printf("|    12. Mostrar Nota de uma Disciplina (xii)         |\n");
-    printf("|    13. Remover Disciplina de Curso (xiii)           |\n");
-    printf("|    14. Remover Disciplina da Matrícula (xiv)        |\n");
-    printf("|    15. Mostrar Histórico do Aluno (xv)              |\n");
+    printf("|     1. Cadastrar Aluno (I)                          |\n");
+    printf("|     2. Cadastrar Curso (II)                         |\n");
+    printf("|     3. Cadastrar Disciplina (III)                   |\n");
+    printf("|     4. Cadastrar Matrícula (IV)                     |\n");
+    printf("|     5. Cadastrar Nota (V)                           |\n");
+    printf("|     6. Mostrar Alunos de um Curso (VI)              |\n");
+    printf("|     7. Mostrar Cursos do Campus (VII)               |\n");
+    printf("|     8. Mostrar Disciplinas de um Curso (VIII)       |\n");
+    printf("|     9. Mostrar Disciplinas de um Período (IX)       |\n");
+    printf("|    10. Mostrar Disciplinas Matriculadas (X)         |\n");
+    printf("|    11. Mostrar Notas por Período (XI)               |\n");
+    printf("|    12. Mostrar Nota de uma Disciplina (XII)         |\n");
+    printf("|    13. Remover Disciplina de Curso (XIII)           |\n");
+    printf("|    14. Remover Disciplina da Matrícula (XIV)        |\n");
+    printf("|    15. Mostrar Histórico do Aluno (XV)              |\n");
     printf("|    16. Voltar                                       |\n");
     printf("|_____________________________________________________|\n");
 }
@@ -34,12 +34,9 @@ int main()
 
     Alunos *aluno = NULL;
     Arv_Cursos *arv_curso = NULL;
-    Arv_Notas *arv_notas = NULL;
-    Arv_Disciplina *arv_disciplina = NULL, *disc;
-    Arv_Matricula *arv_matricula = NULL;
     Cursos_Info *curso;
 
-    int matricula, codigo_curso, quantidade_periodos, codigo_disciplina, entrada_mat, entrada_disc, saida, coddisc, input_semestre;
+    int matricula, codigo_curso, quantidade_periodos, codigo_disciplina, entrada_mat, entrada_disc, saida, input_semestre;
     float periodo, input_nota_final;
     char nome[40], nome_curso[100];
 
@@ -199,7 +196,7 @@ int main()
             }
             printf("Digite o código do curso: ");
             scanf("%d", &codigo_curso);
-            alunosporcurso(aluno, codigo_curso);
+            alunos_por_curso(aluno, codigo_curso);
             break;
 
         case 7:
@@ -221,7 +218,7 @@ int main()
             }
             printf("Digite o código do curso: ");
             scanf("%d", &codigo_curso);
-            exibir_disciplinasporcurso(arv_curso, codigo_curso);
+            exibir_disciplinas_por_curso(arv_curso, codigo_curso);
             break;
 
         case 9:
@@ -245,7 +242,7 @@ int main()
             }
             printf("Digite a matrícula do aluno: ");
             scanf("%d", &matricula);
-            exibir_disciplinasporaluno(aluno, arv_curso, matricula);
+            exibir_disciplinas_por_aluno(aluno, arv_curso, matricula);
             break;
 
         case 11:
@@ -274,6 +271,7 @@ int main()
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
+            break;
             // case 13:
             //     // Remover Disciplina de Curso
             //     if (arv_curso == NULL)

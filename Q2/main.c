@@ -458,7 +458,7 @@ int main()
             case 3:
                 printf("Escolha o curso: ");
                 scanf("%d", &codigo_curso);
-                exibir_disciplinasporcurso(raiz, codigo_curso);
+                exibir_disciplinas_por_curso(raiz, codigo_curso);
                 break;
             case 4:
                 exibir_notas(alunos->notas);

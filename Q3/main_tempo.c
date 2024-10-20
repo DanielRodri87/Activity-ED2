@@ -156,6 +156,8 @@ void povoamentodecrescente_disciplinas(Arv_Cursos **raiz)
 
 void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 {
+    srand((unsigned int)time(NULL));
+
     if (*raiz != NULL)
     {
         Arv_Disciplina *d = (Arv_Disciplina *)malloc(sizeof(Arv_Disciplina));
@@ -170,7 +172,7 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
         }
 
         strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
-        d->info->carga_horaria = (rand() % 5 + 2) * 15;
+        d->info->carga_horaria = (int)(rand() % 5 + 2) * 15;
         d->info->periodo = rand() % (*raiz)->info->quantidade_periodos + 1;
 
         d->info->codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
@@ -185,7 +187,7 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 
 
 // --------------------------------------  POVOAMENTO ALUNOS ---------------------------------
-void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+void povoamentocrescente_alunos(Alunos **aluno)
 {
     char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
 
@@ -199,7 +201,7 @@ void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
     }
 }
 
-void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+void povoamentodecrescente_alunos(Alunos **aluno)
 {
     char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
 
@@ -212,7 +214,7 @@ void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
         cadastrar_aluno(aluno, matricula, nome, codigo_curso);
     }
 }
-void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
+void povoar_alunos_aleatorio(Alunos **aluno)
 {
     char *nomes[5] = {"Eleven", "Mike", "Dustin", "Lucas", "Max"};
     int i = 0;
@@ -333,7 +335,7 @@ void povoar_notas_aleatorio(Alunos *aluno)
 {
     if (aluno != NULL)
     {
-        int i = 1, sucesso = 0;
+        int i = 1;
         while (i <= QUANTIDADECURSOS)
         {
             int codigo_disciplina = (rand() % QUANTIDADEDISCIPLINAS) + 1;
@@ -369,7 +371,7 @@ void povoamentocrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentocrescente_cursos(raiz);
-    povoamentocrescente_alunos(alunos, *raiz);
+    povoamentocrescente_alunos(alunos);
     povoamentocrescente_disciplinas(raiz);
     povoamentocrescente_notas(*alunos);
 }
@@ -383,7 +385,7 @@ void povoamentodecrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentodecrescente_cursos(raiz);
-    povoamentodecrescente_alunos(alunos, *raiz);
+    povoamentodecrescente_alunos(alunos);
     povoamentodecrescente_disciplinas(raiz);
     povoamentodecrescente_notas(*alunos);
 }
@@ -398,7 +400,7 @@ void povoamentoaleatorio_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentoaleatorio_cursos(raiz);
-    povoar_alunos_aleatorio(alunos, *raiz);
+    povoar_alunos_aleatorio(alunos);
     povoar_disciplinas_aleatorio(raiz);
     povoar_notas_aleatorio(*alunos);
 }
@@ -501,7 +503,7 @@ int main()
             case 3:
                 printf("Escolha o curso: ");
                 scanf("%d", &codigo_curso);
-                exibir_disciplinasporcurso(raiz, codigo_curso);
+                exibir_disciplinas_por_curso(raiz, codigo_curso);
                 break;
             case 4:
                 exibir_notas(alunos->notas);
