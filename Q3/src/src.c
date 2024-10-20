@@ -27,8 +27,7 @@ void converternome(char *nome)
     }
 }
 
-
-int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
+int cadastrar_aluno(Alunos **aluno, int matricula, char *nome, int codigo_curso)
 {
     int resultado = 1;  // Variável de controle (1 = sucesso, 0 = aluno já existe, -1 = erro de alocação)
     int existe = 0;     // Variável auxiliar para controlar se o aluno já existe
@@ -36,7 +35,7 @@ int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
     Alunos *aux = *aluno;
     while (aux != NULL)
     {
-        if (aux->matricula == mat)
+        if (aux->matricula == matricula)
         {
             existe = 1;  // Aluno com a mesma matrícula encontrado
             resultado = 0;  // Aluno já existe
@@ -56,7 +55,7 @@ int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
         else
         {
             novo->prox = NULL;
-            novo->matricula = mat;
+            novo->matricula = matricula;
             char *aux_nome = strdup(nome);
             converternome(aux_nome);  // Função para converter nome
             strcpy(novo->nome, aux_nome);
@@ -88,7 +87,7 @@ int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
         }
     }
 
-    return resultado;  // Retornar o valor final da variável de controle
+    return (resultado);  // Retornar o valor final da variável de controle
 }
 
 
@@ -97,82 +96,85 @@ int cadastrar_aluno(Alunos **aluno, int mat, char *nome, int codigo_curso)
 // as disciplinas para permitir o cadastro do curso.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-int altura_curso(Arv_Cursos *raiz)
+int altura_curso(Arv_Cursos *curso)
 {
     int resultado = -1, altura_esquerda, altura_direita;
 
-    if (raiz)
+    if (curso)
     {
-        altura_esquerda = altura_curso(raiz->esq);
-        altura_direita = altura_curso(raiz->dir);
+        altura_esquerda = altura_curso(curso->esq);
+        altura_direita = altura_curso(curso->dir);
         resultado = 1 + (altura_esquerda > altura_direita ? altura_esquerda : altura_direita);
     }
 
-    return resultado;
+    return (resultado);
 }
 
-int fator_balanceamento_curso(Arv_Cursos *raiz)
+int fator_balanceamento_curso(Arv_Cursos *curso)
 {
-    return altura_curso(raiz->esq) - altura_curso(raiz->dir);
+    int fb = 0;
+    if (curso != NULL)
+        fb = altura_curso(curso->esq) - altura_curso(curso->dir);
+    return (fb);
 }
 
-void rotacaoEsq_curso(Arv_Cursos **raiz)
+void rotacao_esq_curso(Arv_Cursos **curso)
 {
     Arv_Cursos *aux;
-    if (*raiz != NULL)
+    if (*curso != NULL)
     {
-        aux = (*raiz)->dir;
-        (*raiz)->dir = aux->esq;
-        aux->esq = (*raiz);
+        aux = (*curso)->dir;
+        (*curso)->dir = aux->esq;
+        aux->esq = (*curso);
 
-        (*raiz)->altura = altura_curso(*raiz);
+        (*curso)->altura = altura_curso(*curso);
         aux->altura = altura_curso(aux);
 
-        *raiz = aux;
+        *curso = aux;
     }
 }
 
-void rotacaoDir_curso(Arv_Cursos **raiz)
+void rotacao_dir_curso(Arv_Cursos **curso)
 {
     Arv_Cursos *aux;
-    if (*raiz != NULL)
+    if (*curso != NULL)
     {
-        aux = (*raiz)->esq;
-        (*raiz)->esq = aux->dir;
-        aux->dir = (*raiz);
+        aux = (*curso)->esq;
+        (*curso)->esq = aux->dir;
+        aux->dir = (*curso);
 
-        (*raiz)->altura = altura_curso(*raiz);
+        (*curso)->altura = altura_curso(*curso);
         aux->altura = altura_curso(aux);
 
-        *raiz = aux;
+        *curso = aux;
     }
 }
 
-void balanceamento_curso(Arv_Cursos **raiz)
+void balanceamento_curso(Arv_Cursos **curso)
 {
     int fb;
     Arv_Cursos *aux;
-    fb = fator_balanceamento_curso(*raiz);
+    fb = fator_balanceamento_curso(*curso);
 
     if (fb >= 2)
     {
-        aux = (*raiz)->esq;
+        aux = (*curso)->esq;
         fb = fator_balanceamento_curso(aux);
 
-        if (fator_balanceamento_curso((*raiz)->esq) < 0)
-            rotacaoEsq_curso(&(*raiz)->esq);
+        if (fator_balanceamento_curso((*curso)->esq) < 0)
+            rotacao_esq_curso(&(*curso)->esq);
 
-        rotacaoDir_curso(raiz);
+        rotacao_dir_curso(curso);
     }
     else if (fb <= -2)
     {
-        aux = (*raiz)->dir;
+        aux = (*curso)->dir;
         fb = fator_balanceamento_curso(aux);
 
-        if (fator_balanceamento_curso((*raiz)->dir) > 0)
-            rotacaoDir_curso(&(*raiz)->dir);
+        if (fator_balanceamento_curso((*curso)->dir) > 0)
+            rotacao_dir_curso(&(*curso)->dir);
 
-        rotacaoEsq_curso(raiz);
+        rotacao_esq_curso(curso);
     }
 }
 int cadastrar_curso(Arv_Cursos **curso, Cursos_Info *info)
@@ -201,7 +203,7 @@ int cadastrar_curso(Arv_Cursos **curso, Cursos_Info *info)
             (*curso)->altura = altura_curso(*curso);
         }
     }
-    return sucesso;
+    return (sucesso);
 }
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // III -  Cadastrar disciplinas a qualquer momento em uma árvore de disciplinas de um determinado curso, ou
@@ -212,10 +214,10 @@ int cadastrar_curso(Arv_Cursos **curso, Cursos_Info *info)
 // Função para obter a altura de uma árvore de disciplinas
 int altura_disciplina(Arv_Disciplina *disciplina)
 {
-    int h = 0;
+    int altura = 0;
     if (disciplina != NULL)
-        h = disciplina->altura;
-    return h;
+        altura = disciplina->altura;
+    return (altura);
 }
 
 // Função para atualizar a altura de uma árvore de disciplinas
@@ -239,33 +241,33 @@ int fator_balanceamento_disciplina(Arv_Disciplina *disciplina)
     int fb = 0;
     if (disciplina != NULL)
         fb = altura_disciplina(disciplina->esq) - altura_disciplina(disciplina->dir);
-    return fb;
+    return (fb);
 }
 
 // Rotação à direita
-void rotacaoDir_disciplina(Arv_Disciplina **raiz)
+void rotacao_dir_disciplina(Arv_Disciplina **disciplina)
 {
-    Arv_Disciplina *nova_raiz = (*raiz)->esq;
-    (*raiz)->esq = nova_raiz->dir;
-    nova_raiz->dir = *raiz;
+    Arv_Disciplina *nova_raiz = (*disciplina)->esq;
+    (*disciplina)->esq = nova_raiz->dir;
+    nova_raiz->dir = *disciplina;
 
-    atualizar_altura_disciplina(*raiz);
+    atualizar_altura_disciplina(*disciplina);
     atualizar_altura_disciplina(nova_raiz);
 
-    *raiz = nova_raiz;
+    *disciplina = nova_raiz;
 }
 
 // Rotação à esquerda
-void rotacaoEsq_disciplina(Arv_Disciplina **raiz)
+void rotacao_esq_disciplina(Arv_Disciplina **disciplina)
 {
-    Arv_Disciplina *nova_raiz = (*raiz)->dir;
-    (*raiz)->dir = nova_raiz->esq;
-    nova_raiz->esq = *raiz;
+    Arv_Disciplina *nova_raiz = (*disciplina)->dir;
+    (*disciplina)->dir = nova_raiz->esq;
+    nova_raiz->esq = *disciplina;
 
-    atualizar_altura_disciplina(*raiz);
+    atualizar_altura_disciplina(*disciplina);
     atualizar_altura_disciplina(nova_raiz);
 
-    *raiz = nova_raiz;
+    *disciplina = nova_raiz;
 }
 
 int validar_cargahoraria(int cargahoraria)
@@ -274,7 +276,7 @@ int validar_cargahoraria(int cargahoraria)
     if (cargahoraria % 15 == 0 && cargahoraria >= 30 && cargahoraria <= 90)
         validar = 1;
 
-    return validar;
+    return (validar);
 }
 
 int validar_periodo(Arv_Cursos *curso, int periodo)
@@ -283,7 +285,7 @@ int validar_periodo(Arv_Cursos *curso, int periodo)
     if (periodo >= 1 && periodo <= curso->info->quantidade_periodos)
         validar = 1;
 
-    return validar;
+    return (validar);
 }
 
 // Função de balanceamento da árvore de disciplinas
@@ -294,14 +296,14 @@ void balanceamento_disciplina(Arv_Disciplina **disciplina)
     if (fb == 2)
     {
         if (fator_balanceamento_disciplina((*disciplina)->esq) < 0)
-            rotacaoEsq_disciplina(&((*disciplina)->esq));
-        rotacaoDir_disciplina(disciplina);
+            rotacao_esq_disciplina(&((*disciplina)->esq));
+        rotacao_dir_disciplina(disciplina);
     }
     else if (fb == -2)
     {
         if (fator_balanceamento_disciplina((*disciplina)->dir) > 0)
-            rotacaoDir_disciplina(&((*disciplina)->dir));
-        rotacaoEsq_disciplina(disciplina);
+            rotacao_dir_disciplina(&((*disciplina)->dir));
+        rotacao_esq_disciplina(disciplina);
     }
 }
 
@@ -325,6 +327,7 @@ int inserir_na_disciplina(Arv_Disciplina **disciplina, Disciplinas_Info *info)
             sucesso = inserir_na_disciplina(&(*disciplina)->dir, info);
         else
             sucesso = 0;
+
         if (sucesso == 1)
         {
             balanceamento_disciplina(disciplina);
@@ -332,7 +335,7 @@ int inserir_na_disciplina(Arv_Disciplina **disciplina, Disciplinas_Info *info)
         }
     }
 
-    return sucesso;
+    return (sucesso);
 }
 
 // Função para cadastrar disciplina no curso
@@ -359,7 +362,7 @@ int cadastrar_disciplina(Arv_Cursos **curso, Disciplinas_Info *no, int codigo_cu
         }
     }
 
-    return sucesso;
+    return (sucesso);
 }
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
@@ -369,11 +372,11 @@ int cadastrar_disciplina(Arv_Cursos **curso, Disciplinas_Info *no, int codigo_cu
 
 int altura_matricula(Arv_Matricula *matricula)
 {
-    int h = 0;
+    int altura = 0;
     if (matricula != NULL)
-        h = matricula->altura;
+        altura = matricula->altura;
 
-    return (h);
+    return (altura);
 }
 
 void atualizar_altura_matricula(Arv_Matricula *matricula)
@@ -396,27 +399,27 @@ int fator_balanceamento_matricula(Arv_Matricula *matricula)
     if (matricula != NULL)
         fb = altura_matricula(matricula->esq) - altura_matricula(matricula->dir);
 
-    return fb;
+    return (fb);
 }
 
-void rotacaoDir_matricula(Arv_Matricula **raiz)
+void rotacao_dir_matricula(Arv_Matricula **matricula)
 {
-    Arv_Matricula *nova_raiz = (*raiz)->esq;
-    (*raiz)->esq = nova_raiz->dir;
-    nova_raiz->dir = *raiz;
-    atualizar_altura_matricula(*raiz);
+    Arv_Matricula *nova_raiz = (*matricula)->esq;
+    (*matricula)->esq = nova_raiz->dir;
+    nova_raiz->dir = *matricula;
+    atualizar_altura_matricula(*matricula);
     atualizar_altura_matricula(nova_raiz);
-    *raiz = nova_raiz;
+    *matricula = nova_raiz;
 }
 
-void rotacaoEsq_matricula(Arv_Matricula **raiz)
+void rotacao_esq_matricula(Arv_Matricula **matricula)
 {
-    Arv_Matricula *nova_raiz = (*raiz)->dir;
-    (*raiz)->dir = nova_raiz->esq;
-    nova_raiz->esq = *raiz;
-    atualizar_altura_matricula(*raiz);
+    Arv_Matricula *nova_raiz = (*matricula)->dir;
+    (*matricula)->dir = nova_raiz->esq;
+    nova_raiz->esq = *matricula;
+    atualizar_altura_matricula(*matricula);
     atualizar_altura_matricula(nova_raiz);
-    *raiz = nova_raiz;
+    *matricula = nova_raiz;
 }
 
 void balanceamento_matricula(Arv_Matricula **matricula)
@@ -426,18 +429,18 @@ void balanceamento_matricula(Arv_Matricula **matricula)
     if (fb == 2)
     {
         if (fator_balanceamento_matricula((*matricula)->esq) < 0)
-            rotacaoEsq_matricula(&((*matricula)->esq));
-        rotacaoDir_matricula(matricula);
+            rotacao_esq_matricula(&((*matricula)->esq));
+        rotacao_dir_matricula(matricula);
     }
     else if (fb == -2)
     {
         if (fator_balanceamento_matricula((*matricula)->dir) > 0)
-            rotacaoDir_matricula(&((*matricula)->dir));
-        rotacaoEsq_matricula(matricula);
+            rotacao_dir_matricula(&((*matricula)->dir));
+        rotacao_esq_matricula(matricula);
     }
 }
 
-void inserirMatricula_AVL(Arv_Matricula **matricula, int codigo, int *igual)
+void inserir_matricula_avl(Arv_Matricula **matricula, int codigo, int *igual)
 {
     if (*matricula == NULL)
     {
@@ -450,30 +453,27 @@ void inserirMatricula_AVL(Arv_Matricula **matricula, int codigo, int *igual)
         *matricula = novo;
     }
     else if (codigo < (*matricula)->info->codigo_disciplina)
-        inserirMatricula_AVL(&(*matricula)->esq, codigo, igual);
+        inserir_matricula_avl(&(*matricula)->esq, codigo, igual);
     else if (codigo > (*matricula)->info->codigo_disciplina)
-        inserirMatricula_AVL(&(*matricula)->dir, codigo, igual);
+        inserir_matricula_avl(&(*matricula)->dir, codigo, igual);
     else
-    {
         *igual = -1;
-        return;
-    }
 
     atualizar_altura_matricula(*matricula);
     balanceamento_matricula(matricula);
 }
 
-void cadastrar_matricula(Alunos **a, int codigo, int mat)
+void cadastrar_matricula(Alunos **aluno, int codigo, int matricula)
 {
-    if (*a != NULL)
+    if (*aluno != NULL)
     {
-        if ((*a)->matricula == mat)
+        if ((*aluno)->matricula == matricula)
         {
             int igual = 0;
-            inserirMatricula_AVL(&(*a)->mat, codigo, &igual);
+            inserir_matricula_avl(&(*aluno)->mat, codigo, &igual);
         }
         else
-            cadastrar_matricula(&(*a)->prox, codigo, mat);
+            cadastrar_matricula(&(*aluno)->prox, codigo, matricula);
     }
 }
 
@@ -484,11 +484,11 @@ void cadastrar_matricula(Alunos **a, int codigo, int mat)
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 int altura_nota(Arv_Notas *nota)
 {
-    int h = 0;
+    int altura = 0;
     if (nota != NULL)
-        h = nota->altura;
+        altura = nota->altura;
 
-    return (h);
+    return (altura);
 }
 
 void atualizar_altura_nota(Arv_Notas *nota)
@@ -510,27 +510,27 @@ int fator_balanceamento_nota(Arv_Notas *nota)
     int fb = 0;
     if (nota != NULL)
         fb = altura_nota(nota->esq) - altura_nota(nota->dir);
-    return fb;
+    return (fb);
 }
 
-void rotacaoDir_nota(Arv_Notas **raiz)
+void rotacao_dir_notas(Arv_Notas **notas)
 {
-    Arv_Notas *nova_raiz = (*raiz)->esq;
-    (*raiz)->esq = nova_raiz->dir;
-    nova_raiz->dir = *raiz;
-    atualizar_altura_nota(*raiz);
+    Arv_Notas *nova_raiz = (*notas)->esq;
+    (*notas)->esq = nova_raiz->dir;
+    nova_raiz->dir = *notas;
+    atualizar_altura_nota(*notas);
     atualizar_altura_nota(nova_raiz);
-    *raiz = nova_raiz;
+    *notas = nova_raiz;
 }
 
-void rotacaoEsq_nota(Arv_Notas **raiz)
+void rotacao_esq_notas(Arv_Notas **notas)
 {
-    Arv_Notas *nova_raiz = (*raiz)->dir;
-    (*raiz)->dir = nova_raiz->esq;
-    nova_raiz->esq = *raiz;
-    atualizar_altura_nota(*raiz);
+    Arv_Notas *nova_raiz = (*notas)->dir;
+    (*notas)->dir = nova_raiz->esq;
+    nova_raiz->esq = *notas;
+    atualizar_altura_nota(*notas);
     atualizar_altura_nota(nova_raiz);
-    *raiz = nova_raiz;
+    *notas = nova_raiz;
 }
 
 void balanceamento_nota(Arv_Notas **nota)
@@ -540,39 +540,94 @@ void balanceamento_nota(Arv_Notas **nota)
     if (fb == 2)
     {
         if (fator_balanceamento_nota((*nota)->esq) < 0)
-            rotacaoEsq_nota(&((*nota)->esq));
-        rotacaoDir_nota(nota);
+            rotacao_esq_notas(&((*nota)->esq));
+        rotacao_dir_notas(nota);
     }
     else if (fb == -2)
     {
         if (fator_balanceamento_nota((*nota)->dir) > 0)
-            rotacaoDir_nota(&((*nota)->dir));
-        rotacaoEsq_nota(nota);
+            rotacao_dir_notas(&((*nota)->dir));
+        rotacao_esq_notas(nota);
     }
 }
 
-void buscar_disciplina(Arv_Matricula *matricula, int cod, int *enc)
+int cadastrar_nota_aux(Arv_Notas **nota, Notas_Info *info)
 {
-    if (matricula != NULL)
+    int sucesso = 1;
+    if (*nota == NULL)
     {
-        if (matricula->info->codigo_disciplina == cod)
-            *enc = 1;
-        else if (cod < matricula->info->codigo_disciplina)
-            buscar_disciplina(matricula->esq, cod, enc);
-        else
-            buscar_disciplina(matricula->dir, cod, enc);
+        Arv_Notas *novo = (Arv_Notas *)malloc(sizeof(Arv_Notas));
+        novo->info = info;
+        novo->esq = NULL;
+        novo->dir = NULL;
+        *nota = novo;
     }
+    else
+    {
+        if (info->codigo_disciplina == (*nota)->info->codigo_disciplina)
+            sucesso = 0;
+        else
+        {
+            if (info->codigo_disciplina < (*nota)->info->codigo_disciplina)
+                sucesso = cadastrar_nota_aux(&((*nota)->esq), info);
+            else
+                sucesso = cadastrar_nota_aux(&((*nota)->dir), info);
+        }
+
+        balanceamento_nota(nota);
+        atualizar_altura_nota(*nota);
+    }
+    return (sucesso);
 }
+
+int cadastrar_notas(Alunos **aluno, int matricula, Notas_Info *info)
+{
+    int(encontrado) = 0;
+    if (*aluno != NULL)
+    {
+        if ((*aluno)->matricula == matricula)
+        {
+            int enc_disc = 0;
+            buscar_disciplina((*aluno)->mat, info->codigo_disciplina, &enc_disc);
+            if (enc_disc == 1)
+            {
+                if (cadastrar_nota_aux(&(*aluno)->notas, info) == 1)
+                {
+                    remover_matricula(&(*aluno)->mat, info->codigo_disciplina);
+                    encontrado = 1;
+                }
+            }
+        }
+        else
+            encontrado = cadastrar_notas(&(*aluno)->prox, matricula, info);
+    }
+
+    return (encontrado);
+}
+
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // XIV - Permita remover uma disciplina da árvore de matrícula de um determinado aluno.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
+void buscar_disciplina(Arv_Matricula *matricula, int codigo, int *encontrado)
+{
+    if (matricula != NULL)
+    {
+        if (matricula->info->codigo_disciplina == codigo)
+            *encontrado = 1;
+        else if (codigo < matricula->info->codigo_disciplina)
+            buscar_disciplina(matricula->esq, codigo, encontrado);
+        else
+            buscar_disciplina(matricula->dir, codigo, encontrado);
+    }
+}
+
 int e_folha_matricula(Arv_Matricula *matricula)
 {
     return (matricula->esq == NULL && matricula->dir == NULL);
 }
 
-Arv_Matricula *soumfilhomat(Arv_Matricula *matricula)
+Arv_Matricula *so_um_filho_matricula(Arv_Matricula *matricula)
 {
     Arv_Matricula *aux;
     aux = NULL;
@@ -581,20 +636,20 @@ Arv_Matricula *soumfilhomat(Arv_Matricula *matricula)
     else if (matricula->dir == NULL)
         aux = matricula->esq;
 
-    return aux;
+    return (aux);
 }
 
-Arv_Matricula *menorfilhoesqmat(Arv_Matricula *matricula)
+Arv_Matricula *menor_filho_esq_matricula(Arv_Matricula *matricula)
 {
     Arv_Matricula *aux;
     aux = NULL;
     if (matricula)
     {
-        aux = menorfilhoesqmat(matricula->esq);
+        aux = menor_filho_esq_matricula(matricula->esq);
         if (!aux)
             aux = matricula;
     }
-    return aux;
+    return (aux);
 }
 
 void remover_matricula(Arv_Matricula **matricula, int codigo)
@@ -611,7 +666,7 @@ void remover_matricula(Arv_Matricula **matricula, int codigo)
                 free(aux);
                 *matricula = NULL;
             }
-            else if ((aux = soumfilhomat(*matricula)) != NULL)
+            else if ((aux = so_um_filho_matricula(*matricula)) != NULL)
             {
                 Arv_Matricula *temp;
                 temp = *matricula;
@@ -620,7 +675,7 @@ void remover_matricula(Arv_Matricula **matricula, int codigo)
             }
             else
             {
-                Arv_Matricula *menorfilho = menorfilhoesqmat((*matricula)->dir);
+                Arv_Matricula *menorfilho = menor_filho_esq_matricula((*matricula)->dir);
                 (*matricula)->info->codigo_disciplina = menorfilho->info->codigo_disciplina;
                 remover_matricula(&(*matricula)->dir, menorfilho->info->codigo_disciplina);
             }
@@ -637,65 +692,12 @@ void remover_matricula(Arv_Matricula **matricula, int codigo)
     }
 }
 
-int cadastrar_nota_aux(Arv_Notas **nota, Notas_Info *n)
-{
-    int sucesso = 1;
-    if (*nota == NULL)
-    {
-        Arv_Notas *novo = (Arv_Notas *)malloc(sizeof(Arv_Notas));
-        novo->info = n;
-        novo->esq = NULL;
-        novo->dir = NULL;
-        *nota = novo;
-    }
-    else
-    {
-        if (n->codigo_disciplina == (*nota)->info->codigo_disciplina)
-            sucesso = 0;
-        else
-        {
-            if (n->codigo_disciplina < (*nota)->info->codigo_disciplina)
-                sucesso = cadastrar_nota_aux(&((*nota)->esq), n);
-            else
-                sucesso = cadastrar_nota_aux(&((*nota)->dir), n);
-        }
-
-        balanceamento_nota(nota);
-        atualizar_altura_nota(*nota);
-    }
-    return sucesso;
-}
-
-int cadastrar_notas(Alunos **aluno, int matricula, Notas_Info *n)
-{
-    int(enc) = 0;
-    if (*aluno != NULL)
-    {
-        if ((*aluno)->matricula == matricula)
-        {
-            int enc_disc = 0;
-            buscar_disciplina((*aluno)->mat, n->codigo_disciplina, &enc_disc);
-            if (enc_disc == 1)
-            {
-                if (cadastrar_nota_aux(&(*aluno)->notas, n) == 1)
-                {
-                    remover_matricula(&(*aluno)->mat, n->codigo_disciplina);
-                    enc = 1;
-                }
-            }
-        }
-        else
-            enc = cadastrar_notas(&(*aluno)->prox, matricula, n);
-    }
-
-    return (enc);
-}
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // VI -  Mostrar todos os alunos de um determinado curso.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-void alunosporcurso(Alunos *aluno, int codigo_curso)
+void alunos_por_curso(Alunos *aluno, int codigo_curso)
 {
     if (aluno != NULL)
     {
@@ -705,7 +707,7 @@ void alunosporcurso(Alunos *aluno, int codigo_curso)
             printf("Matricula: %d\n", aluno->matricula);
             printf("\n");
         }
-        alunosporcurso(aluno->prox, codigo_curso);
+        alunos_por_curso(aluno->prox, codigo_curso);
     }
 }
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
@@ -724,7 +726,7 @@ void exibir_curso(Arv_Cursos *raiz)
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // VIII - Mostrar todas as disciplinas de um determinado curso.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
-void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina)
+void exibir_disciplinas_por_curso_recursivamente(Arv_Disciplina *disciplina)
 {
     if (disciplina != NULL)
     {
@@ -735,12 +737,12 @@ void exibir_disciplinasporcurso_recursivamente(Arv_Disciplina *disciplina)
         printf("Carga Horaria: %d\n", disciplina->info->carga_horaria);
         printf("-------------------------------\n");
 
-        exibir_disciplinasporcurso_recursivamente(disciplina->esq);
-        exibir_disciplinasporcurso_recursivamente(disciplina->dir);
+        exibir_disciplinas_por_curso_recursivamente(disciplina->esq);
+        exibir_disciplinas_por_curso_recursivamente(disciplina->dir);
     }
 }
 
-void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso)
+void exibir_disciplinas_por_curso(Arv_Cursos *curso, int codigo_curso)
 {
     if (curso != NULL)
     {
@@ -750,26 +752,26 @@ void exibir_disciplinasporcurso(Arv_Cursos *curso, int codigo_curso)
             printf("Disciplinas do curso %s:\n", curso->info->nome_curso);
             printf("-------------------------------\n");
 
-            exibir_disciplinasporcurso_recursivamente(disciplina_atual);
+            exibir_disciplinas_por_curso_recursivamente(disciplina_atual);
         }
 
-        exibir_disciplinasporcurso(curso->esq, codigo_curso);
-        exibir_disciplinasporcurso(curso->dir, codigo_curso);
+        exibir_disciplinas_por_curso(curso->esq, codigo_curso);
+        exibir_disciplinas_por_curso(curso->dir, codigo_curso);
     }
 }
 
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 // IX - Mostrar todas as disciplinas de um determinado período de um curso.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
-void exibir_disciplina_periodo(Arv_Cursos *raiz, int periodo)
+void exibir_disciplina_periodo(Arv_Cursos *curso, int periodo)
 {
-    if (raiz != NULL)
+    if (curso != NULL)
     {
-        if (raiz->info->disciplina->info->periodo == periodo)
+        if (curso->info->disciplina->info->periodo == periodo)
         {
-            printf("Curso: %s | Disciplina: %s | Período: %d\n", raiz->info->nome_curso, raiz->info->disciplina->info->nome_disciplina, raiz->info->disciplina->info->periodo);
-            exibir_disciplina_periodo(raiz->esq, periodo);
-            exibir_disciplina_periodo(raiz->dir, periodo);
+            printf("Curso: %s | Disciplina: %s | Período: %d\n", curso->info->nome_curso, curso->info->disciplina->info->nome_disciplina, curso->info->disciplina->info->periodo);
+            exibir_disciplina_periodo(curso->esq, periodo);
+            exibir_disciplina_periodo(curso->dir, periodo);
         }
     }
 }
@@ -812,24 +814,24 @@ void exibir_disciplina(Arv_Cursos *curso, int codigo_disciplina, int codigo_curs
     }
 }
 
-void exibir_disciplina_aluno(Arv_Matricula *mat, Arv_Cursos *cursos, int codigo_curso)
+void exibir_disciplina_aluno(Arv_Matricula *matricula, Arv_Cursos *cursos, int codigo_curso)
 {
-    if (mat != NULL)
+    if (matricula != NULL)
     {
-        exibir_disciplina(cursos, mat->info->codigo_disciplina, codigo_curso);
-        exibir_disciplina_aluno(mat->esq, cursos, codigo_curso);
-        exibir_disciplina_aluno(mat->dir, cursos, codigo_curso);
+        exibir_disciplina(cursos, matricula->info->codigo_disciplina, codigo_curso);
+        exibir_disciplina_aluno(matricula->esq, cursos, codigo_curso);
+        exibir_disciplina_aluno(matricula->dir, cursos, codigo_curso);
     }
 }
 
-void exibir_disciplinasporaluno(Alunos *aluno, Arv_Cursos *cursos, int matricula)
+void exibir_disciplinas_por_aluno(Alunos *aluno, Arv_Cursos *cursos, int matricula)
 {
     if (aluno != NULL)
     {
         if (aluno->matricula == matricula)
             exibir_disciplina_aluno(aluno->mat, cursos, aluno->codigo_curso);
         else
-            exibir_disciplinasporaluno(aluno->prox, cursos, matricula);
+            exibir_disciplinas_por_aluno(aluno->prox, cursos, matricula);
     }
 }
 
@@ -837,7 +839,7 @@ void exibir_disciplinasporaluno(Alunos *aluno, Arv_Cursos *cursos, int matricula
 // XI -  Mostrar todas as notas de disciplinas de um determinado período de um determinado aluno.
 // ---------------------------------------------------- XXXXXX -------------------------------------------------
 
-void aux_XI_notaperiodo(Arv_Notas *nota, int periodo)
+void auxiliar_notas_periodo(Arv_Notas *nota, int periodo)
 {
     if (nota != NULL)
     {
@@ -848,8 +850,8 @@ void aux_XI_notaperiodo(Arv_Notas *nota, int periodo)
             printf("Semestre: %.2f\n", nota->info->semestre);
             printf("\n");
         }
-        aux_XI_notaperiodo(nota->esq, periodo);
-        aux_XI_notaperiodo(nota->dir, periodo);
+        auxiliar_notas_periodo(nota->esq, periodo);
+        auxiliar_notas_periodo(nota->dir, periodo);
     }
 }
 
@@ -858,7 +860,7 @@ void notas_disciplina_periodo_aluno(Alunos *aluno, int periodo, int matricula)
     if (aluno != NULL)
     {
         if (aluno->matricula == matricula)
-            aux_XI_notaperiodo(aluno->notas, periodo);
+            auxiliar_notas_periodo(aluno->notas, periodo);
         else
             notas_disciplina_periodo_aluno(aluno->prox, periodo, matricula);
     }
@@ -879,7 +881,7 @@ Arv_Disciplina *buscar_disciplina_xii(Arv_Disciplina *disciplina, int codigo_dis
         else
             resultado = buscar_disciplina_xii(disciplina->dir, codigo_disciplina);
     }
-    return resultado;
+    return (resultado);
 }
 
 Arv_Notas *buscar_nota_xii(Arv_Notas *nota, int codigo_disciplina)
@@ -1011,20 +1013,20 @@ void remover_disciplina(Arv_Disciplina **disciplina, int codigo_disciplina, int 
 
 void confirmar_remocao_disciplina(Alunos *alunos, int codigo_disciplina, int *confirmar)
 {
-    int enc = 0;
+    int encontrado = 0;
 
     if (alunos != NULL)
     {
-        buscar_matricula(alunos->mat, codigo_disciplina, &enc);
+        buscar_matricula(alunos->mat, codigo_disciplina, &encontrado);
 
-        if (enc != 0)
+        if (encontrado != 0)
             *confirmar = 1;
 
         confirmar_remocao_disciplina(alunos->prox, codigo_disciplina, confirmar);
     }
 }
 
-int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina)
+int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int codigo_curso, int codigo_disciplina)
 {
     int remove = 0, confirmar_disciplina = 0;
     if ((*cursos))
@@ -1032,12 +1034,12 @@ int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, i
         confirmar_remocao_disciplina(alunos, codigo_disciplina, &confirmar_disciplina);
         if (confirmar_disciplina != 0)
         {
-            if ((*cursos)->info->codigo_curso == idcurso)
+            if ((*cursos)->info->codigo_curso == codigo_curso)
                 remover_disciplina(&(*cursos)->info->disciplina, codigo_disciplina, &remove);
-            else if (idcurso < (*cursos)->info->codigo_curso)
-                remove = remover_disciplina_curso(&(*cursos)->esq, alunos, idcurso, codigo_disciplina);
+            else if (codigo_curso < (*cursos)->info->codigo_curso)
+                remove = remover_disciplina_curso(&(*cursos)->esq, alunos, codigo_curso, codigo_disciplina);
             else
-                remove = remover_disciplina_curso(&(*cursos)->dir, alunos, idcurso, codigo_disciplina);
+                remove = remover_disciplina_curso(&(*cursos)->dir, alunos, codigo_curso, codigo_disciplina);
         }
     }
     return (remove);
