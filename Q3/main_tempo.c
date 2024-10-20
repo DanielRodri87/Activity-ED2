@@ -4,11 +4,11 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 2000
-#define CODIGOCURSO 2000
-#define QUANTIDADEDISCIPLINAS 2000
-#define QUANTIDADEALUNOS 2000
-#define QUANTIDADENOTAS 2000
+#define QUANTIDADECURSOS 1000
+#define CODIGOCURSO 1000
+#define QUANTIDADEDISCIPLINAS 1000
+#define QUANTIDADEALUNOS 1000
+#define QUANTIDADENOTAS 1000
 
 double tempos_insercao_crescente[QUANTIDADECURSOS];
 double tempos_insercao_decrescente[QUANTIDADECURSOS];
@@ -240,6 +240,26 @@ void exibir_todos_alunos(Alunos *aluno)
         exibir_todos_alunos(aluno->prox);
     }
 }
+
+
+void exibir_todos_alunos_relatorio(Alunos *aluno)
+{
+    if (aluno != NULL)
+    {
+        if (aluno->codigo_curso == 1 || aluno->codigo_curso == 200 || aluno->codigo_curso == 500 || aluno->codigo_curso == 1000)
+        {
+            printf("Matrícula: %d\n", aluno->matricula);
+            printf("Nome: %s\n", aluno->nome);
+            printf("Código do Curso: %d\n", aluno->codigo_curso);
+            printf("----------------------------\n");
+        }
+
+
+        exibir_todos_alunos_relatorio(aluno->prox);
+    }
+}
+
+
 
 // ------------------------------------  POVOAMENTO DE NOTAS ----------------------------------
 
@@ -476,7 +496,7 @@ int main()
                 exibir_curso(raiz);
                 break;
             case 2:
-                exibir_todos_alunos(alunos);
+                exibir_todos_alunos_relatorio(alunos);
                 break;
             case 3:
                 printf("Escolha o curso: ");
