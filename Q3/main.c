@@ -271,30 +271,29 @@ int main()
             scanf("%d", &matricula);
             printf("Digite o código da disciplina: ");
             scanf("%d", &codigo_disciplina);
+            exibir_nota_aluno_disciplina(aluno, arv_curso, matricula, codigo_disciplina);
             break;
-            // case 13:
-            //     // Remover Disciplina de Curso
-            //     if (arv_curso == NULL)
-            //     {
-            //         printf("Erro: Nenhum curso cadastrado.\n");
-            //         break;
-            //     }
-            //     printf("Digite o código do curso: ");
-            //     scanf("%d", &codigo_curso);
-            //     printf("Digite o código da disciplina a ser removida: ");
-            //     scanf("%d", &codigo_disciplina);
+        case 13:
+            // Remover Disciplina de Curso
+            if (arv_curso == NULL)
+            {
+                printf("Erro: Nenhum curso cadastrado.\n");
+                break;
+            }
+            printf("Digite o código do curso: ");
+            scanf("%d", &codigo_curso);
+            printf("Digite o código da disciplina a ser removida: ");
+            scanf("%d", &codigo_disciplina);
 
-            //     saida = remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
+            saida = remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
 
-            //     if (saida)
-            //     {
-            //         printf("Disciplina removida com sucesso do curso.\n");
-            //     }
-            //     else
-            //     {
-            //         printf("Erro: Não foi possível remover a disciplina. Verifique se o curso e a disciplina estão cadastrados.\n");
-            //     }
-            //     break;
+            if (!saida)
+                printf("Disciplina removida com sucesso do curso.\n");
+        
+            else
+                printf("Erro: Não foi possível remover a disciplina. Verifique se o curso e a disciplina estão cadastrados.\n");
+            
+            break;
 
         case 14:
             // Remover Disciplina da Matrícula
