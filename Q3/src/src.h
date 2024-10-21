@@ -117,8 +117,7 @@ void mostrar_notas_aluno(Alunos *aluno, Arv_Disciplina *disciplinas, int periodo
 void exibir_disciplina_periodo(Arv_Cursos *r, int periodo);
 int cadastrar_disciplina(Arv_Cursos **curso, Disciplinas_Info *no, int codigo_curso);
 void exibir_disciplinas_por_curso(Arv_Cursos *curso, int codigo_curso);
-void remover_disciplina_do_curso(Arv_Cursos *curso, int codigo_curso, int codigo_disciplina);
-//int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int idcurso, int codigo_disciplina); (essa não existe)
+int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int codigo_curso, int codigo_disciplina);
 void exibir_disciplinas_por_aluno(Alunos *aluno, Arv_Cursos *cursos, int matricula);
 
 
