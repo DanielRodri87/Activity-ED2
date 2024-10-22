@@ -486,6 +486,7 @@ int main()
             break;
 
         case 6:
+ 
             printf("1. Cursos\n");
             printf("2. Alunos\n");
             printf("3. Disciplinas\n");
@@ -508,10 +509,16 @@ int main()
             case 4:
                 exibir_notas(alunos->notas);
                 break;
+            
+            case 5:
+                printf("Voltando...\n");
+                break;
 
             default:
+                printf("Digite uma opcao valida...\n");
                 break;
             }
+            break;
         case 7:
             printf("Saindo...\n");
             break;

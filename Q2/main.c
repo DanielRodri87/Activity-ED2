@@ -141,7 +141,7 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
 
 // -----------------------------------  POVOAMENTO ALUNOS --------------------------------
 
-void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+void povoamentocrescente_alunos(Alunos **aluno)
 {
     char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
 
@@ -155,7 +155,7 @@ void povoamentocrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
     }
 }
 
-void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
+void povoamentodecrescente_alunos(Alunos **aluno)
 {
     char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
 
@@ -169,7 +169,7 @@ void povoamentodecrescente_alunos(Alunos **aluno, Arv_Cursos *curso)
     }
 }
 
-void povoar_alunos_aleatorio(Alunos **aluno, Arv_Cursos *curso)
+void povoar_alunos_aleatorio(Alunos **aluno)
 {
     char *nomes[5] = {"Daniel", "Rodrigues", "Cristina", "Sousa", "Juliana"};
     int i = 0;
@@ -322,7 +322,7 @@ void povoamentocrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentocrescente_cursos(raiz);
-    povoamentocrescente_alunos(alunos, *raiz);
+    povoamentocrescente_alunos(alunos);
     povoamentocrescente_disciplinas(raiz);
     povoamentocrescente_notas(*alunos);
 }
@@ -336,7 +336,7 @@ void povoamentodecrescente_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentodescrecente_cursos(raiz);
-    povoamentodecrescente_alunos(alunos, *raiz);
+    povoamentodecrescente_alunos(alunos);
     povoamentodecrescente_disciplinas(raiz);
     povoamentodecrescente_notas(*alunos);
 }
@@ -349,7 +349,7 @@ void povoamentoaleatorio_completo(Arv_Cursos **raiz, Alunos **alunos)
     *alunos = NULL;
 
     povoamentoaleatorio_cursos(raiz);
-    povoar_alunos_aleatorio(alunos, *raiz);
+    povoar_alunos_aleatorio(alunos);
     povoar_disciplinas_aleatorio(raiz);
     povoar_notas_aleatorio(*alunos);
 }
@@ -464,9 +464,15 @@ int main()
                 exibir_notas(alunos->notas);
                 break;
 
+            case 5:
+                printf("Voltando...\n");
+                break;
+
             default:
+                printf("Digite uma opcao valida...\n");
                 break;
             }
+            break;
         case 7:
             printf("Saindo...\n");
             break;
