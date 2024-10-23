@@ -3,12 +3,13 @@
 #include <string.h>
 #include "src/src.h"
 #include <time.h>
+#include <unistd.h>
 
-#define QUANTIDADECURSOS 1000
-#define CODIGOCURSO 1000
-#define QUANTIDADEDISCIPLINAS 1000
-#define QUANTIDADEALUNOS 1000
-#define QUANTIDADENOTAS 1000
+#define QUANTIDADECURSOS 2000
+#define CODIGOCURSO 2000
+#define QUANTIDADEDISCIPLINAS 2000
+#define QUANTIDADEALUNOS 2000
+#define QUANTIDADENOTAS 2000
 
 double tempos_insercao_crescente[QUANTIDADECURSOS];
 double tempos_insercao_decrescente[QUANTIDADECURSOS];
@@ -390,6 +391,32 @@ void relatorio_tempos_insercao()
     printf("|---------------------------------------------------------|\n");
 }
 
+double metrificar_tempo_por_busca_nota(Alunos *alunos, Arv_Cursos *raiz)
+{
+    clock_t inicio, fim;
+    double tempo_total = 0.0;
+    int i;
+
+    int aluno_rand = 680;
+    int disc_rand = 547;
+
+    for(i = 0; i < 30; i++)
+    {
+        Alunos *aux = alunos;
+        Arv_Cursos *aux2 = raiz;
+        inicio = clock();
+        exibir_nota_aluno_disciplina(aux, aux2, aluno_rand, disc_rand);  
+        fim = clock();
+
+        tempo_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC; 
+
+        printf("%.6f\n", tempo_total/(i+1));
+    }
+
+    return tempo_total / 30;
+}
+
+
 // -----------------------------------  FUNÇÃO PRINCIPAL -----------------------------------
 
 int main()
@@ -427,14 +454,8 @@ int main()
             printf("Inserção aleatória concluída!\n");
             break;
         case 4:
-            printf("Informe a matrícula do aluno: ");
-            scanf("%d", &matricula);
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            clock_t inicio = clock();
-            exibir_nota_aluno_disciplina(alunos, raiz, matricula, codigo_disciplina);
-            clock_t fim = clock();
-            printf("O tempo para a busca foi de: %fs\n", ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000);
+            float resultado = metrificar_tempo_por_busca_nota(alunos, raiz);
+            printf("O tempo para a busca foi de: %fs\n", resultado);
             break;
         case 5:
             relatorio_tempos_insercao();

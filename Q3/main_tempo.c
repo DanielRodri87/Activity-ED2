@@ -4,11 +4,11 @@
 #include "src/src.h"
 #include <time.h>
 
-#define QUANTIDADECURSOS 1000
-#define CODIGOCURSO 1000
-#define QUANTIDADEDISCIPLINAS 1000
-#define QUANTIDADEALUNOS 1000
-#define QUANTIDADENOTAS 1000
+#define QUANTIDADECURSOS 2000
+#define CODIGOCURSO 2000
+#define QUANTIDADEDISCIPLINAS 2000
+#define QUANTIDADEALUNOS 2000
+#define QUANTIDADENOTAS 2000
 
 double tempos_insercao_crescente[QUANTIDADECURSOS];
 double tempos_insercao_decrescente[QUANTIDADECURSOS];
@@ -46,9 +46,9 @@ void povoamentocrescente_cursos(Arv_Cursos **raiz)
         strcpy(entrada_curso->nome_curso, "MEDICINA");
         entrada_curso->quantidade_periodos = 12;
 
-        clock_t inicio = clock(); 
+        clock_t inicio = clock();
         cadastrar_curso(raiz, entrada_curso);
-        clock_t fim = clock(); 
+        clock_t fim = clock();
 
         tempos_insercao_crescente[i - 1] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     }
@@ -64,9 +64,9 @@ void povoamentodecrescente_cursos(Arv_Cursos **raiz)
         strcpy(entrada_curso->nome_curso, "MEDICINA");
         entrada_curso->quantidade_periodos = 12;
 
-        clock_t inicio = clock(); 
+        clock_t inicio = clock();
         cadastrar_curso(raiz, entrada_curso);
-        clock_t fim = clock(); 
+        clock_t fim = clock();
 
         tempos_insercao_decrescente[QUANTIDADECURSOS - i] = ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000;
     }
@@ -110,7 +110,7 @@ void povoamentocrescente_disciplinas(Arv_Cursos **raiz)
         if (d->info == NULL)
         {
             printf("Erro ao alocar memória para info da disciplina.\n");
-            free(d);  
+            free(d);
         }
 
         strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
@@ -139,7 +139,7 @@ void povoamentodecrescente_disciplinas(Arv_Cursos **raiz)
         if (d->info == NULL)
         {
             printf("Erro ao alocar memória para info da disciplina.\n");
-            free(d);  
+            free(d);
         }
 
         strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
@@ -168,7 +168,7 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
         if (d->info == NULL)
         {
             printf("Erro ao alocar memória para info da disciplina.\n");
-            free(d);  
+            free(d);
         }
 
         strcpy(d->info->nome_disciplina, "Algoritmos e Estruturas de Pacientes");
@@ -184,7 +184,6 @@ void povoar_disciplinas_aleatorio(Arv_Cursos **raiz)
         povoar_disciplinas_aleatorio(&(*raiz)->dir);
     }
 }
-
 
 // --------------------------------------  POVOAMENTO ALUNOS ---------------------------------
 void povoamentocrescente_alunos(Alunos **aluno)
@@ -223,7 +222,7 @@ void povoar_alunos_aleatorio(Alunos **aluno)
     {
         int matricula = (rand() % QUANTIDADEALUNOS) + 1;
         char *nome = nomes[rand() % 5];
-        int codigo_curso = i+1;
+        int codigo_curso = i + 1;
 
         if (cadastrar_aluno(aluno, matricula, nome, codigo_curso) == 1)
             i++;
@@ -243,7 +242,6 @@ void exibir_todos_alunos(Alunos *aluno)
     }
 }
 
-
 void exibir_todos_alunos_relatorio(Alunos *aluno)
 {
     if (aluno != NULL)
@@ -256,12 +254,9 @@ void exibir_todos_alunos_relatorio(Alunos *aluno)
             printf("----------------------------\n");
         }
 
-
         exibir_todos_alunos_relatorio(aluno->prox);
     }
 }
-
-
 
 // ------------------------------------  POVOAMENTO DE NOTAS ----------------------------------
 
@@ -441,6 +436,31 @@ void relatorio_tempos_insercao()
     printf("|---------------------------------------------------------|\n");
 }
 
+double metrificar_tempo_por_busca_nota(Alunos *alunos, Arv_Cursos *raiz)
+{
+    clock_t inicio, fim;
+    double tempo_total = 0.0;
+    int i;
+
+    int aluno_rand = 680;
+    int disc_rand = 547;
+
+    for (i = 0; i < 30; i++)
+    {
+        Alunos *aux = alunos;
+        Arv_Cursos *aux2 = raiz;
+        inicio = clock();
+        exibir_nota_aluno_disciplina(aux, aux2, aluno_rand, disc_rand);
+        fim = clock();
+
+        tempo_total += ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+
+        printf("%.6f\n", tempo_total / (i + 1));
+    }
+
+    return tempo_total / 30;
+}
+
 // -----------------------------------  FUNÇÃO PRINCIPAL -----------------------------------
 
 int main()
@@ -472,21 +492,15 @@ int main()
             printf("Inserção aleatória concluída!\n");
             break;
         case 4:
-            printf("Informe a matrícula do aluno: ");
-            scanf("%d", &matricula);
-            printf("Informe o código da disciplina: ");
-            scanf("%d", &codigo_disciplina);
-            clock_t inicio = clock();
-            exibir_nota_aluno_disciplina(alunos, raiz, matricula, codigo_disciplina);
-            clock_t fim = clock();
-            printf("O tempo para a busca foi de: %fs\n", ((double)(fim - inicio) / CLOCKS_PER_SEC) * 1000);
+            float resultado = metrificar_tempo_por_busca_nota(alunos, raiz);
+            printf("O tempo para a busca foi de: %fs\n", resultado);
             break;
         case 5:
             relatorio_tempos_insercao();
             break;
 
         case 6:
- 
+
             printf("1. Cursos\n");
             printf("2. Alunos\n");
             printf("3. Disciplinas\n");
@@ -509,7 +523,7 @@ int main()
             case 4:
                 exibir_notas(alunos->notas);
                 break;
-            
+
             case 5:
                 printf("Voltando...\n");
                 break;
