@@ -767,11 +767,14 @@ void exibir_disciplina_periodo(Arv_Cursos *curso, int periodo)
 {
     if (curso != NULL)
     {
-        if (curso->info->disciplina->info->periodo == periodo)
+        if (curso->info->disciplina != NULL)
         {
-            printf("Curso: %s | Disciplina: %s | Período: %d\n", curso->info->nome_curso, curso->info->disciplina->info->nome_disciplina, curso->info->disciplina->info->periodo);
-            exibir_disciplina_periodo(curso->esq, periodo);
-            exibir_disciplina_periodo(curso->dir, periodo);
+            if (curso->info->disciplina->info->periodo == periodo)
+            {
+                printf("Curso: %s | Disciplina: %s | Período: %d\n", curso->info->nome_curso, curso->info->disciplina->info->nome_disciplina, curso->info->disciplina->info->periodo);
+                exibir_disciplina_periodo(curso->esq, periodo);
+                exibir_disciplina_periodo(curso->dir, periodo);
+            }
         }
     }
 }
@@ -1032,7 +1035,7 @@ int remover_disciplina_curso(Arv_Cursos **cursos, Alunos *alunos, int codigo_cur
     if ((*cursos))
     {
         confirmar_remocao_disciplina(alunos, codigo_disciplina, &confirmar_disciplina);
-        if (confirmar_disciplina != 0)
+        if (confirmar_disciplina == 0)
         {
             if ((*cursos)->info->codigo_curso == codigo_curso)
                 remover_disciplina(&(*cursos)->info->disciplina, codigo_disciplina, &remove);

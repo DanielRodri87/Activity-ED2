@@ -287,7 +287,7 @@ int main()
 
             saida = remover_disciplina_curso(&arv_curso, aluno, codigo_curso, codigo_disciplina);
 
-            if (!saida)
+            if (saida)
                 printf("Disciplina removida com sucesso do curso.\n");
         
             else
@@ -333,7 +333,7 @@ int main()
 
         case 16:
             // Voltar
-            printf("Retornando ao menu anterior...\n");
+            printf("Saindo...\n");
             break;
 
         default:
